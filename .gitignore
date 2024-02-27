@@ -42,5 +42,5 @@ build/
 /data/
 
 ### Database persistency
-app/backend/database/data
+app/todo-manager-backend/database/data
 htmlReport/
