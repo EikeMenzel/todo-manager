@@ -17,13 +17,13 @@ describe('AppComponent', () => {
   it(`should have the 'todo-list-frontend' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('todo-list-frontend');
+    expect(app.title).toEqual('task-list-frontend');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, todo-list-frontend');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, task-list-frontend');
   });
 });
