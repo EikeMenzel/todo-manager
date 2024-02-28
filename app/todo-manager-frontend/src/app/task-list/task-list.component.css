@@ -4,3 +4,16 @@
   height: 40px;
   border-left: transparent solid 5px;
 }
+
+.category-item {
+  border-radius: 5px;
+  background-color: #e1e1e1;
+}
+
+.search-container .search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}

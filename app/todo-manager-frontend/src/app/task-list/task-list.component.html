@@ -5,22 +5,61 @@
     </div>
     <div class="row justify-content-center">
       <div class="col-8 content" style="background: aqua">
-        <div *ngFor="let todo of todoList" class="todo-item mt-1 d-flex align-items-center">
-          <div class="col-10 m-lg-2">
-              <span class="text-break">
-                {{todo.description}}
-              </span>
+        <div class="row">
+          <div class="col"></div>
+          <div class="mt-1 col-4">
+            <div class="search-container align-items-center d-flex position-relative">
+              <input type="text"
+                     placeholder="Search Tasks"
+                     class="form-control search-input custom-search-bar"
+                     aria-label="Search Tasks"
+                     [(ngModel)]="searchTaskTerm"
+                     (ngModelChange)="onTaskSearchChange()">
+              <fa-icon class="custom-icon fa-l fa-solid search-icon" [icon]="faSearch"></fa-icon>
+            </div>
           </div>
-          <div class="col-2">
+        </div>
+        <div class="row ">
+          <ng-container *ngFor="let todo of taskListFiltered">
+            <div class="todo-item mt-1 d-flex align-items-center">
+              <div class="col-10 m-lg-2">
+              <span class="text-break">
+                {{ todo.description }}
+              </span>
+              </div>
+              <div class="col-2">
             <span class="align-middle text-end">
               {{ todo.status }}
             </span>
-          </div>
+              </div>
+            </div>
 
+          </ng-container>
         </div>
       </div>
-      <div class="col-4" style="background: bisque">
-        <p>Das</p>
+      <div class="col-auto" style="background: bisque">
+        <div class="search-categories row">
+          <div class="mt-1">
+            <div class="search-container align-items-center d-flex position-relative">
+              <input type="text"
+                     placeholder="Search Categories"
+                     class="form-control search-input custom-search-bar"
+                     aria-label="Search Categories"
+                     [(ngModel)]="searchCategoryTerm"
+                     (ngModelChange)="onCategorySearchChange()">
+              <fa-icon class="custom-icon fa-l fa-solid search-icon" [icon]="faSearch"></fa-icon>
+            </div>
+          </div>
+        </div>
+        <div class="row categories-list p-2 justify-content-center">
+          <ng-container *ngFor="let category of categoryListFiltered">
+            <div class="text-center row">
+              <button class="btn btn-secondary mb-1" (click)="selectCategory(category.id)">
+                <span>{{ category.name }}</span>
+              </button>
+            </div>
+          </ng-container>
+        </div>
       </div>
     </div>
   </div>
