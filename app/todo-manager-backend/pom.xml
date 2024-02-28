@@ -17,6 +17,7 @@
         <module>DiscoveryService</module>
         <module>AuthenticationService</module>
         <module>DatabaseService</module>
+        <module>GatewayService</module>
         <!-- Add more modules as needed -->
     </modules>
 

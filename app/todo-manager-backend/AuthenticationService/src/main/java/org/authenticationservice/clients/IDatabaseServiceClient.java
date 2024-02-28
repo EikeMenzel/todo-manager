@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "DatabaseService")
+@FeignClient(name = "database-service")
 public interface IDatabaseServiceClient {
     String BASE_PATH = "/api/v1/db";
     @GetMapping(BASE_PATH + "/users/{userId}")
