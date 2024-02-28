@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "database-service")
 public interface IDatabaseServiceClient {
     String BASE_PATH = "/api/v1/db";
-    @GetMapping(BASE_PATH + "/users/{userId}")
-    String getUserList(@PathVariable("userId") Long userId);
 
     /**
      * Checks if a username exists in the database.
