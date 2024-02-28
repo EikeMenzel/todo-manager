@@ -24,15 +24,9 @@ public class JwtService implements IJwtService {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    private String generateToken(Long userId, String tokenType) {
-        long expirationTimeLong;
-        if(tokenType.equals("ACCESS"))
-            expirationTimeLong = expirationTime * 1000;
-        else
-            expirationTimeLong = expirationTime * 1000 * 5;
-
+    public String generateToken(Long userId) {
         final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong);
+        final Date expirationDate = new Date(createdDate.getTime() + expirationTime);
 
         return Jwts
                 .builder()

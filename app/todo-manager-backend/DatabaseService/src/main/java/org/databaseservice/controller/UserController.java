@@ -3,6 +3,7 @@ package org.databaseservice.controller;
 import lombok.RequiredArgsConstructor;
 import org.databaseservice.constants.ErrorMessage;
 import org.databaseservice.payload.RegisterDTO;
+import org.databaseservice.payload.UserDTO;
 import org.databaseservice.services.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,13 @@ public class UserController {
             return "<";
         else
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.USER_NOT_FOUND);
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<UserDTO> getUserFromUsername(@PathVariable String username) {
+        return userService.getUserFromUsername(username)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping()
