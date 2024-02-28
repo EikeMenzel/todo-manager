@@ -1,6 +1,7 @@
 package org.authenticationservice.clients;
 
 import org.authenticationservice.payload.RegisterDTO;
+import org.authenticationservice.payload.UserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,4 +25,7 @@ public interface IDatabaseServiceClient {
 
     @PostMapping(BASE_PATH + "/users")
     ResponseEntity<Void> saveUser(@RequestBody RegisterDTO registerDTO);
+
+    @GetMapping(BASE_PATH + "/users/username/{username}")
+    ResponseEntity<UserDTO> getUserDTOFromUsername(@PathVariable("username") String username);
 }

@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.databaseservice.mapper.IUserMapper;
 import org.databaseservice.payload.RegisterDTO;
+import org.databaseservice.payload.UserDTO;
 import org.databaseservice.repository.IUserRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +31,10 @@ public class UserService implements IUserService{
             log.error(e.getMessage());
             return false;
         }
+    }
+
+    public Optional<UserDTO> getUserFromUsername(String username) {
+        return userRepository.getUserEntityByUsername(username)
+                .map(userMapper::UserEntityToUserDTO);
     }
 }
