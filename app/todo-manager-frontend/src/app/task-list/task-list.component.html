@@ -1,0 +1,27 @@
+<div class="d-flex align-items-center justify-content-center user-profile-wrapper">
+  <div class="user-profile-container container">
+    <div class="row mb-5 mt-5">
+      <h1>Task List</h1>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-8 content" style="background: aqua">
+        <div *ngFor="let todo of todoList" class="todo-item mt-1 d-flex align-items-center">
+          <div class="col-10 m-lg-2">
+              <span class="text-break">
+                {{todo.description}}
+              </span>
+          </div>
+          <div class="col-2">
+            <span class="align-middle text-end">
+              {{ todo.status }}
+            </span>
+          </div>
+
+        </div>
+      </div>
+      <div class="col-4" style="background: bisque">
+        <p>Das</p>
+      </div>
+    </div>
+  </div>
+</div>

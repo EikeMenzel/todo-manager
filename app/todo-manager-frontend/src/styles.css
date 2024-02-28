@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --bg-color: white;
+  --main-color: #92C7CF;
+  --item-background: #cecece;
+}
+
+@font-face {
+  font-family: 'Helvetica';
+  src: local('Helvetica'), url('./assets/Helvetica.woff') format('woff');
+}
+
+* {
+  font-family: 'Helvetica', sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
