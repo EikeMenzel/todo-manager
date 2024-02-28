@@ -20,14 +20,6 @@ public class UserController {
         return userService.existsUserByUsername(username);
     }
 
-    @GetMapping("/{userId}")
-    public String getAllUsers(@PathVariable Long userId) {
-        if(userId == 1)
-            return "<";
-        else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.USER_NOT_FOUND);
-    }
-
     @GetMapping("/username/{username}")
     public ResponseEntity<UserDTO> getUserFromUsername(@PathVariable String username) {
         return userService.getUserFromUsername(username)
