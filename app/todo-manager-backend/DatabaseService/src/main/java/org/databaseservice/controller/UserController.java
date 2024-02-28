@@ -1,5 +1,6 @@
 package org.databaseservice.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.databaseservice.constants.ErrorMessage;
 import org.databaseservice.payload.RegisterDTO;
@@ -35,9 +36,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> saveUser(@RequestBody() RegisterDTO registerDTO) {
-        return userService.saveUser(registerDTO)
-                ? ResponseEntity.status(HttpStatus.CREATED).build()
-                : ResponseEntity.internalServerError().build();
+    public void saveUser(@RequestBody() @Valid RegisterDTO registerDTO) {
+        userService.saveUser(registerDTO);
     }
 }
