@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.authenticationservice.clients.IDatabaseServiceClient;
 import org.authenticationservice.payload.LoginDTO;
+import org.authenticationservice.payload.TokenDTO;
 import org.authenticationservice.payload.UserDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +26,7 @@ public class UserService implements IUserService{
         return encoder.encode(password);
     }
 
-    public Optional<String> authenticateUser(LoginDTO loginDTO) { //returns a jwt if authentication is successful
+    public Optional<TokenDTO> authenticateUser(LoginDTO loginDTO) { //returns a jwt if authentication is successful
         try {
             ResponseEntity<UserDTO> responseEntity = databaseServiceClient.getUserDTOFromUsername(loginDTO.getUsername());
             if(!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null)
@@ -34,7 +35,7 @@ public class UserService implements IUserService{
             val user = responseEntity.getBody();
             boolean arePasswordsEqual = encoder.matches(loginDTO.getPassword(), user.getPassword());
             return arePasswordsEqual
-                    ? Optional.of(jwtService.generateToken(user.getId()))
+                    ? Optional.of(new TokenDTO(jwtService.generateToken(user.getId())))
                     : Optional.empty();
         } catch (FeignException e) { // If a user is not found, we still want to return a 401!
             log.debug(e.getMessage());
