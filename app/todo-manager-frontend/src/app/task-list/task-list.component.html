@@ -4,8 +4,8 @@
       <h1>Task List</h1>
     </div>
     <div class="row justify-content-center">
-      <div class="col-8 content" style="background: aqua">
-        <div class="row">
+      <div class="col-8 content">
+        <div class="row mb-2">
           <div class="col"></div>
           <div class="mt-1 col-4">
             <div class="search-container align-items-center d-flex position-relative">
@@ -19,25 +19,24 @@
             </div>
           </div>
         </div>
-        <div class="row ">
+        <div class="row">
           <ng-container *ngFor="let todo of taskListFiltered">
-            <div class="todo-item mt-1 d-flex align-items-center">
-              <div class="col-10 m-lg-2">
-              <span class="text-break">
+            <div class="todo-item mb-2 d-flex align-items-center {{getProClass(todo.priority)}}">
+              <div class="col-10 m-lg-2 d-inline-block text-truncate">
+              <span class="col-2">
                 {{ todo.description }}
               </span>
               </div>
-              <div class="col-2">
-            <span class="align-middle text-end">
-              {{ todo.status }}
-            </span>
+              <div class="col-2 task-status-wrapper">
+                <span class="align-middle task-status">
+                  {{ todo.status }}
+                </span>
               </div>
             </div>
-
           </ng-container>
         </div>
       </div>
-      <div class="col-auto" style="background: bisque">
+      <div class="col-sm-4 category-wrapper">
         <div class="search-categories row">
           <div class="mt-1">
             <div class="search-container align-items-center d-flex position-relative">
@@ -54,7 +53,7 @@
         <div class="row categories-list p-2 justify-content-center">
           <ng-container *ngFor="let category of categoryListFiltered">
             <div class="text-center row">
-              <button class="btn btn-secondary mb-1" (click)="selectCategory(category.id)">
+              <button class="btn btn-primary category-button mb-2 {{category.id == this.activeCategory ? 'active-category' : ''}}" (click)="selectCategory(category.id)">
                 <span>{{ category.name }}</span>
               </button>
             </div>
@@ -64,3 +63,17 @@
     </div>
   </div>
 </div>
+
+<ng-template #editTask let-modal>
+  <div class="modal-header custom-modal-header">
+    <h5 class="modal-title text-center no-border custom-modal-title" id="editTaskHeader" #editTaskHeader>Task</h5>
+  </div>
+  <div class="modal-body custom-modal-body no-border">
+    <div class="success-container" #editTaskContentWrapper>
+      <p>Your Account has been created! Please return to the login page to proceed!</p>
+    </div>
+  </div>
+  <div class="modal-footer custom-modal-footer no-border">
+    <button type="button" class="btn continue-button" (click)="modal.dismiss()">Save</button>
+  </div>
+</ng-template>
