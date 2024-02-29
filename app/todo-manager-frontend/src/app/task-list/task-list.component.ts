@@ -6,9 +6,12 @@ import {Category} from "../models/Category";
 import {Priority} from "../models/Prio";
 import {TaskService} from "../services/task/task.service";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faAdd, faSearch, faSignOut} from "@fortawesome/free-solid-svg-icons";
 import {FormsModule} from "@angular/forms";
 import {NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
+import {AuthService} from "../services/auth/auth.service";
+import {Router} from "@angular/router";
+import {config} from "rxjs";
 
 @Component({
   selector: 'app-task-list',
@@ -32,20 +35,27 @@ export class TaskListComponent implements OnInit {
   protected activeCategory: number = 1;
   @ViewChild('editTask') successModal: ElementRef | undefined;
   private successModalRef: NgbModalRef | undefined;
+  protected editTaskHeader: string = "Add Task";
 
   onCategorySearchChange() {
     this.categoryListFiltered = this.categoryList.filter(value => value.name.toLowerCase().includes(this.searchCategoryTerm.toLowerCase()))
   }
+
   onTaskSearchChange() {
     this.taskListFiltered = this.taskList.filter(value => value.description.toLowerCase().includes(this.searchTaskTerm.toLowerCase()))
   }
 
   constructor(
-    private taskService: TaskService
+    private taskService: TaskService,
+    private authService: AuthService,
+    private router: Router
   ) {
   }
 
   ngOnInit() {
+    if (!this.authService.getToken()) {
+      this.router.navigate(["/login"])
+    }
     this.taskList = [
       new Task(1, "Toilette putzen", Priority.High, TaskStatus.NOT_STARTED),
       new Task(2, "Zimmer aufräumen", Priority.Medium, TaskStatus.IN_PROGRESS),
@@ -53,15 +63,8 @@ export class TaskListComponent implements OnInit {
       new Task(4, "Add a new feature that is definitely not totally garbage and is just another excuse to avoid the big elephant in the room", Priority.Low, TaskStatus.DONE),
     ];
     this.taskListFiltered = this.taskList;
-    this.taskService.getCategories().subscribe({
-      next: value => {
-        this.categoryList = value
-        this.categoryListFiltered = value
-      },
-      error: err => {
-        //TODO: error handeling
-      }
-    })
+
+    this.updateCategories()
   }
 
   selectCategory(id: number) {
@@ -70,10 +73,62 @@ export class TaskListComponent implements OnInit {
 
   getProClass(priority: Priority) {
     switch (priority) {
-      case Priority.High: return "prio-high";
-      case Priority.Medium: return "prio-medium";
-      case Priority.Low: return "prio-low";
-      default: return "";
+      case Priority.High:
+        return "prio-high";
+      case Priority.Medium:
+        return "prio-medium";
+      case Priority.Low:
+        return "prio-low";
+      default:
+        return "";
     }
   }
+
+  protected readonly faAdd = faAdd;
+
+  updateCategories() {
+    this.taskService.getCategories().subscribe({
+      next: value => {
+        if (value.body) {
+          this.categoryList = value.body
+          this.categoryListFiltered = value.body
+        }
+      },
+      error: err => {
+        //TODO: error handeling
+      }
+    })
+  }
+
+  addCategory() {
+    const categoryName = prompt('Please enter a new category name:');
+
+
+    if (categoryName) {
+      this.taskService.addCategory(categoryName).subscribe({
+        next: value => {
+          const newCategoryId = this.categoryList.length + 1;
+          const newCategory: Category = {
+            id: -1,
+            name: categoryName
+          };
+          this.updateCategories()
+        },
+        error: err => {
+          //TODO: Error Handleing
+        }
+      })
+
+    }
+  }
+
+  logout() {
+    if (!confirm("Are you sure you want to logout?")) {
+      return
+    }
+
+    this.authService.logout();
+  }
+
+  protected readonly faSignOut = faSignOut;
 }

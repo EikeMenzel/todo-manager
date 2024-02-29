@@ -20,6 +20,40 @@
   text-align: right;
 }
 
+.add-task-btn {
+  background-color: #A7C7E7;
+}
+
+.add-task-btn, .add-category-btn {
+  color: #FFFFFF;
+  border: none;
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease
+}
+
+.logout-button-wrapper {
+  position: fixed;
+  right: 0;
+}
+
+.add-category-btn {
+  background-color: #cfbcfd;
+  border-radius: 50%;
+  height: 2.8rem;
+  width: 2.8rem;
+}
+
+.add-category-btn:hover {
+  background-color: #a28ed5;
+}
+
+.add-category-btn:active {
+  background-color: #7348e3;
+}
+
 .todo-item.prio-high {
   border-left: 5px solid red !important;
 }
