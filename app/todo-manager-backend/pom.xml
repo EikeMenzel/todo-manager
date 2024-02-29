@@ -18,6 +18,7 @@
         <module>AuthenticationService</module>
         <module>DatabaseService</module>
         <module>GatewayService</module>
+        <module>TaskService</module>
         <!-- Add more modules as needed -->
     </modules>
 

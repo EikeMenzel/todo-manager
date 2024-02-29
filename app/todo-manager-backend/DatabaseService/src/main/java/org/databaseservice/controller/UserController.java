@@ -1,5 +1,6 @@
 package org.databaseservice.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.databaseservice.constants.ErrorMessage;
 import org.databaseservice.payload.RegisterDTO;
@@ -19,14 +20,6 @@ public class UserController {
         return userService.existsUserByUsername(username);
     }
 
-    @GetMapping("/{userId}")
-    public String getAllUsers(@PathVariable Long userId) {
-        if(userId == 1)
-            return "<";
-        else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.USER_NOT_FOUND);
-    }
-
     @GetMapping("/username/{username}")
     public ResponseEntity<UserDTO> getUserFromUsername(@PathVariable String username) {
         return userService.getUserFromUsername(username)
@@ -35,9 +28,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> saveUser(@RequestBody() RegisterDTO registerDTO) {
-        return userService.saveUser(registerDTO)
-                ? ResponseEntity.status(HttpStatus.CREATED).build()
-                : ResponseEntity.internalServerError().build();
+    public void saveUser(@RequestBody() @Valid RegisterDTO registerDTO) {
+        userService.saveUser(registerDTO);
     }
 }

@@ -23,6 +23,15 @@ public class GatewayConfig {
                                 .filters(f -> f.filter(authenticationFilter))
                                 .uri("lb://authentication-service")
                 )
+
+                .route("task-service",
+                        r -> r.path(
+                                "/api/v1/categories",
+                                "/api/v1/categories/{categoryId}"
+                        )
+                                .filters(f -> f.filter(authenticationFilter))
+                                .uri("lb://task-service")
+                )
                 .build();
     }
 }
