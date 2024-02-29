@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/categories/{categoryId}/tasks")
 @RequiredArgsConstructor
+@Validated
 public class ToDoController {
     private final IDatabaseServiceClient databaseServiceClient;
     @PostMapping()
