@@ -26,9 +26,11 @@ public class GatewayConfig {
 
                 .route("task-service",
                         r -> r.path(
-                                "/api/v1/categories",
-                                "/api/v1/categories/{categoryId}"
-                        )
+                                        "/api/v1/categories",
+                                        "/api/v1/categories/{categoryId}",
+                                        "/api/v1/categories/{categoryId}/tasks",
+                                        "/api/v1/categories/{categoryId}/tasks/{toDoId}"
+                                )
                                 .filters(f -> f.filter(authenticationFilter))
                                 .uri("lb://task-service")
                 )

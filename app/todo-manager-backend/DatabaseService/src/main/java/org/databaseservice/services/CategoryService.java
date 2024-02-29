@@ -20,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryService implements ICategoryService {
+    private final ValidationUtilsService validationUtilsService;
     private final ICategoryRepository categoryRepository;
     private final IUserRepository userRepository;
 
@@ -28,12 +29,10 @@ public class CategoryService implements ICategoryService {
     @Override
     @Transactional
     public void saveCategory(Long userId, CategoryDTO categoryDTO) {
-        val userOptional = userRepository.findById(userId);
-        if(userOptional.isEmpty())
-            throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+        val user = validationUtilsService.fetchAndValidateUser(userId);
 
         try {
-            var categoryEntity = new CategoryEntity(categoryDTO.getName(), userOptional.get());
+            var categoryEntity = new CategoryEntity(categoryDTO.getName(), user);
             categoryRepository.save(categoryEntity);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -44,6 +43,8 @@ public class CategoryService implements ICategoryService {
     @Override
     @Transactional
     public List<CategoryDTO> getCategories(Long userId) {
+        validationUtilsService.fetchAndValidateUser(userId); // check if user exists
+
         return categoryRepository.findCategoryEntitiesByUserId(userId)
                 .stream()
                 .map(categoryMapper::categoryEntityToCategoryDto)
@@ -52,22 +53,34 @@ public class CategoryService implements ICategoryService {
 
     @Override
     @Transactional
-    public void updateCategory(Long userId, CategoryDTO categoryDTO) {
-        Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(categoryDTO.getId());
-        if(categoryEntityOptional.isEmpty())
-            throw new NotFoundException(ErrorMessage.CATEGORY_MOT_FOUND);
+    public void updateCategory(Long userId, Long categoryId, CategoryDTO categoryDTO) {
+        validationUtilsService.validateIdsMatch(categoryId, categoryDTO.getId());
 
-        var categoryEntity = categoryEntityOptional.get();
+        val category = validationUtilsService.fetchAndValidateCategory(categoryDTO.getId());
 
-        if(!categoryEntity.getUser().getId().equals(userId))
-            throw new BadRequestException(ErrorMessage.PERMISSION_DENIED);
+        validationUtilsService.validateUserAccessToCategory(userId, category);
 
         try {
-            categoryEntity.setName(categoryDTO.getName());
-            categoryRepository.save(categoryEntity);
+            category.setName(categoryDTO.getName());
+            categoryRepository.save(category);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new UpdateException(ErrorMessage.UPDATE_ERROR);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteCategory(Long userId, Long categoryId) {
+        val category = validationUtilsService.fetchAndValidateCategory(categoryId);
+
+        validationUtilsService.validateUserAccessToCategory(userId, category);
+
+        try {
+            categoryRepository.delete(category);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new UpdateException(ErrorMessage.DELETE_ERROR);
         }
     }
 }

@@ -21,7 +21,7 @@ public class UserService implements IUserService{
     private final IUserMapper userMapper;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean existsUserByUsername(String username) {
         return userRepository.existsUserEntityByUsername(username);
     }
@@ -37,7 +37,7 @@ public class UserService implements IUserService{
         }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<UserDTO> getUserFromUsername(String username) {
         return userRepository.getUserEntityByUsername(username)
                 .map(userMapper::UserEntityToUserDTO);
