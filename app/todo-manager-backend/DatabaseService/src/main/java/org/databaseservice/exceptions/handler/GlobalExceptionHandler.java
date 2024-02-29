@@ -1,10 +1,7 @@
 package org.databaseservice.exceptions.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.databaseservice.exceptions.BadRequestException;
-import org.databaseservice.exceptions.NotFoundException;
-import org.databaseservice.exceptions.SaveException;
-import org.databaseservice.exceptions.UpdateException;
+import org.databaseservice.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -31,6 +28,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UpdateException.class)
     public ResponseEntity<Map<String, Object>> handleUpdateException(UpdateException ex, WebRequest request) {
+        return new ResponseEntity<>(buildErrorBody(ex, request), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(DeleteException.class)
+    public ResponseEntity<Map<String, Object>> handleDeleteException(DeleteException ex, WebRequest request) {
         return new ResponseEntity<>(buildErrorBody(ex, request), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

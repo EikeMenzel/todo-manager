@@ -35,4 +35,7 @@ public class ValidationExceptionHandler {
         });
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
+
+    public interface OnCreate {}
+    public interface OnUpdate {}
 }

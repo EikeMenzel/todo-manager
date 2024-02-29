@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+
+import java.io.Serializable;
 
 @Entity
 @Table(name = "categories")
@@ -13,7 +14,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryEntity {
+public class CategoryEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "c_id")

@@ -6,7 +6,6 @@ import org.databaseservice.payload.UserDTO;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
-@Component
 @Mapper(componentModel = "spring")
 public interface IUserMapper {
     UserEntity registerDtoToUserEntity(RegisterDTO registerDTO);
