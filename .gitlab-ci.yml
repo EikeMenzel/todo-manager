@@ -1,6 +1,3 @@
-include:
-  - '.gitlab/ci-templates/docker_credentials.yml'
-
 stages:
   - build
   - test
@@ -15,6 +12,9 @@ variables:
   BACKEND_SERVICE_TYPE: todo-manager-backend
   FRONTEND_SERVICE_TYPE: todo-manager-frontend
 
+.docker_credentials: &docker_credentials
+                       docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+
 .push_to_registry_template: &push_to_registry_template
   stage: push_to_registry
   tags:
@@ -24,6 +24,8 @@ variables:
     - name: docker:20.10.21-dind
       alias: docker
       command: [ "--tls=false" ]
+  before_script:
+    - *docker_credentials
   script:
     - export CI_REGISTRY_IMAGE_PATH=$CI_REGISTRY_URL/$GITLAB_PROJECT_URL/$CI_COMMIT_REF_SLUG
     - |
