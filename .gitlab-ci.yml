@@ -64,7 +64,7 @@ build_backend:
   tags:
     - docker
   script:
-    - cd app/backend
+    - cd app/$BACKEND_SERVICE_TYPE
     - mvn clean install -DskipTests=true --batch-mode
     - mvn package
   allow_failure: false
@@ -75,7 +75,7 @@ test_backend: #unit tests backend
   tags:
     - docker
   script:
-    - cd app/backend
+    - cd app/$BACKEND_SERVICE_TYPE
     - mvn test
   allow_failure: false
 
@@ -85,7 +85,7 @@ test_frontend: #e2e tests frontend
   tags:
     - docker
   script:
-    - cd app/frontend/angular-frontend
+    - cd app/$FRONTEND_SERVICE_TYPE
     - npm ci
     - npm start &
     - npx wait-on http://localhost:4200
@@ -99,7 +99,7 @@ sonarqube_frontend:
     - docker
   allow_failure: false
   script:
-    - sonar-scanner -Dsonar.qualitygate.wait=true -Dsonar.projectKey=$SONAR_PROJECT_KEY_FRONTEND -Dsonar.sources=./app/frontend -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN_FRONTEND
+    - sonar-scanner -Dsonar.qualitygate.wait=true -Dsonar.projectKey=$SONAR_PROJECT_KEY_FRONTEND -Dsonar.sources=./app/$FRONTEND_SERVICE_TYPE -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN_FRONTEND
 
 sonarqube_backend:
   stage: code_quality
@@ -107,7 +107,7 @@ sonarqube_backend:
     - docker
   image: maven:3.9.6-eclipse-temurin-21-jammy
   script:
-    - cd app/backend
+    - cd app/$BACKEND_SERVICE_TYPE
     - mvn clean verify
     - mvn sonar:sonar -Dsonar.qualitygate.wait=true -Dsonar.projectKey=$SONAR_PROJECT_KEY_BACKEND -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN_BACKEND -Dsonar.cpd.exclusions=authentication-service/src/main/java/com/service/authenticationservice/payload/inc/UserDTO.java,authentication-service/src/main/java/com/service/authenticationservice/security/services/UserDetailsImpl.java,cards-service/src/main/java/com/service/cardsservice/configuration/AppConfig.java,gateway/src/main/java/com/service/gateway/model/UserDTO.java,gateway/src/main/java/com/service/gateway/security/services/UserDetailsImpl.java,session-service/src/main/java/com/service/sessionservice/configuration/AppConfig.java -Dsonar.exclusions=mail-service/src/main/java/com/service/mailservice/services/MailContentProvider.java,achievement-service/src/main/java/com/service/achievementservice/configuration/UserHandshakeHandler.java
   allow_failure: false
