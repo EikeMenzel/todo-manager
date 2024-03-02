@@ -14,11 +14,11 @@
     </properties>
 
     <modules>
-        <module>DiscoveryService</module>
-        <module>AuthenticationService</module>
-        <module>DatabaseService</module>
-        <module>GatewayService</module>
-        <module>TaskService</module>
+        <module>discovery-service</module>
+        <module>authentication-service</module>
+        <module>database-service</module>
+        <module>gateway-service</module>
+        <module>task-service</module>
         <!-- Add more modules as needed -->
     </modules>
 

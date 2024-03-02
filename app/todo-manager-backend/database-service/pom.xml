@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org</groupId>
-	<artifactId>DatabaseService</artifactId>
+	<artifactId>database-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>DatabaseService</name>
 	<description>DatabaseService</description>

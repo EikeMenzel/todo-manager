@@ -117,39 +117,39 @@ push_discovery_service_to_registry:
   <<: *push_to_registry_template
   variables:
     SERVICE_TYPE: $BACKEND_SERVICE_TYPE
-    SERVICE_NAME: "DiscoveryService"
+    SERVICE_NAME: "discovery-service"
 
 push_database_service_to_registry:
   <<: *push_to_registry_template
   variables:
     SERVICE_TYPE: $BACKEND_SERVICE_TYPE
-    SERVICE_NAME: "DatabaseService"
+    SERVICE_NAME: "database-service"
 
 
 push_gateway_service_to_registry:
   <<: *push_to_registry_template
   variables:
     SERVICE_TYPE: $BACKEND_SERVICE_TYPE
-    SERVICE_NAME: "GatewayService"
+    SERVICE_NAME: "gateway-service"
 
 
 push_authentication_service_to_registry:
   <<: *push_to_registry_template
   variables:
     SERVICE_TYPE: $BACKEND_SERVICE_TYPE
-    SERVICE_NAME: "AuthenticationService"
+    SERVICE_NAME: "authentication-service"
 
 
 push_task_service_to_registry:
   <<: *push_to_registry_template
   variables:
     SERVICE_TYPE: $BACKEND_SERVICE_TYPE
-    SERVICE_NAME: "TaskService"
+    SERVICE_NAME: "task-service"
 
 # Frontend
 push_frontend_to_registry:
   <<: *push_to_registry_template
   variables:
     SERVICE_TYPE: $FRONTEND_SERVICE_TYPE
-    SERVICE_NAME: "Frontend"
+    SERVICE_NAME: "frontend"
 
