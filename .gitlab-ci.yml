@@ -53,7 +53,7 @@ build_frontend:
   before_script:
     - npm install -g @angular/cli
   script:
-    - cd app/frontend/angular-frontend
+    - cd app/$FRONTEND_SERVICE_TYPE
     - npm install
     - ng build
   allow_failure: false
