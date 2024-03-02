@@ -3,17 +3,27 @@ include:
 
 stages:
   - build
-  - test
-  - code_quality
-  - trivy
-  - push_to_registry
 
 .build_service_intermediate_template: &build_template_intermediate
-  stage: build_intermediate
+  stage: build
   tags:
     - docker
   image: docker:20.10.21
   before_script: *docker_credentials
   script:
     - echo "Testing docker login"
+  allow_failure: false
+
+build_service:
+  <<: *build_template_intermediate
+  stage: build
+
+test_include_and_alias:
+  stage: test
+  tags:
+    - docker
+  image: docker:20.10.21
+  before_script: *docker_credentials
+  script:
+    - echo "If this job runs successfully, it means the include and alias work."
   allow_failure: false
