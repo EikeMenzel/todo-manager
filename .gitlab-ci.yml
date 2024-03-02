@@ -1,0 +1,19 @@
+include:
+  - local: '.gitlab/ci-templates/docker_credentials.yml'
+
+stages:
+  - build
+  - test
+  - code_quality
+  - trivy
+  - push_to_registry
+
+.build_service_intermediate_template: &build_template_intermediate
+  stage: build_intermediate
+  tags:
+    - docker
+  image: docker:20.10.21
+  before_script: *docker_credentials
+  script:
+    - echo "Testing docker login"
+  allow_failure: false
