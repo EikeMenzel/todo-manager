@@ -57,7 +57,7 @@ public class AuthenticationFilter implements GatewayFilter {
     private String extractBearerFromHeader(ServerHttpRequest serverHttpRequest) {
         List<String> authorizationHeaders = serverHttpRequest.getHeaders().getOrEmpty("Authorization");
         if (!authorizationHeaders.isEmpty()) {
-            String authorizationHeader = authorizationHeaders.getFirst();
+            String authorizationHeader = authorizationHeaders.get(0);
             if (authorizationHeader.startsWith("Bearer ")) {
                 return authorizationHeader.substring(7); // Skip "Bearer " prefix
             }
