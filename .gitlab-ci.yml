@@ -1,5 +1,4 @@
-include:
-  - local: '.gitlab/ci-templates/docker_credentials.yml'
+include: '.gitlab/ci-templates/docker_credentials.yml'
 
 stages:
   - build
@@ -9,7 +8,6 @@ stages:
   tags:
     - docker
   image: docker:20.10.21
-  before_script: *docker_credentials
   script:
     - echo "Testing docker login"
   allow_failure: false
@@ -23,7 +21,6 @@ test_include_and_alias:
   tags:
     - docker
   image: docker:20.10.21
-  before_script: *docker_credentials
   script:
     - echo "If this job runs successfully, it means the include and alias work."
   allow_failure: false
