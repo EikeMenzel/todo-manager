@@ -15,12 +15,3 @@ stages:
 build_service:
   <<: *build_template_intermediate
   stage: build
-
-test_include_and_alias:
-  stage: test
-  tags:
-    - docker
-  image: docker:20.10.21
-  script:
-    - echo "If this job runs successfully, it means the include and alias work."
-  allow_failure: false
