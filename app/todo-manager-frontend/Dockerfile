@@ -13,7 +13,7 @@ RUN npm run build --prod
 
 FROM nginx:latest
 
-COPY --from=builder /usr/local/app/dist/angular-frontend/browser /usr/share/nginx/html
+COPY --from=builder /usr/local/app/dist/todo-list-frontend/browser /usr/share/nginx/html
 
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
