@@ -4,6 +4,7 @@ stages:
   - lint
   - code_quality
   - push_to_registry
+  - release
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
