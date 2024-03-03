@@ -101,13 +101,8 @@ linting_backend:
   image: maven:3.9.6-eclipse-temurin-21-jammy
   script:
     - cd app/$BACKEND_SERVICE_TYPE
-    - mvn checkstyle:checkstyle-aggregate -Dcheckstyle.output.file=checkstyle-results.xml
-    - ls -la
-  allow_failure: true
-  artifacts:
-    paths:
-      - app/$BACKEND_SERVICE_TYPE/target/checkstyle-results.xml
-    expire_in: 1 week
+    - mvn checkstyle:checkstyle
+  allow_failure: false
 
 linting_frontend:
   stage: lint
