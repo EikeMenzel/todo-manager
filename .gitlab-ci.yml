@@ -113,6 +113,7 @@ linting_frontend:
   script:
     - npm install -g @angular/cli
     - cd app/$FRONTEND_SERVICE_TYPE
+    - npm run install
     - npm run lint
   allow_failure: true
 
