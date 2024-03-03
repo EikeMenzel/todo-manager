@@ -1,9 +1,9 @@
 stages:
   - build
   - test
+  - lint
   - code_quality
   - push_to_registry
-  - deploy
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
@@ -93,6 +93,34 @@ test_frontend: #e2e tests frontend
     - npx cypress run --browser firefox
   allow_failure: true
 
+# Linting Stage
+linting_backend:
+  stage: lint
+  tags:
+    - docker
+  image: maven:3.9.6-eclipse-temurin-21-jammy
+  script:
+    - cd app/$BACKEND_SERVICE_TYPE
+    - mvn checkstyle:checkstyle -Dcheckstyle.output.file=checkstyle-results.xml
+  allow_failure: true
+  artifacts:
+    paths:
+      - checkstyle-results.xml
+    expire_in: 1 week
+
+linting_frontend:
+  stage: lint
+  tags:
+    - docker
+  image: docker:20.10.21
+  before_script:
+    - *docker_credentials
+  script:
+    - cd app/$FRONTEND_SERVICE_TYPE
+    - npm run lint
+  allow_failure: true
+
+
 sonarqube_frontend:
   stage: code_quality
   image: sonarsource/sonar-scanner-cli:latest
@@ -112,6 +140,7 @@ sonarqube_backend:
     - mvn clean verify
     - mvn sonar:sonar -Dsonar.qualitygate.wait=true -Dsonar.projectKey=$SONAR_PROJECT_KEY_BACKEND -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN_BACKEND -Dsonar.cpd.exclusions=authentication-service/src/main/java/com/service/authenticationservice/payload/inc/UserDTO.java,authentication-service/src/main/java/com/service/authenticationservice/security/services/UserDetailsImpl.java,cards-service/src/main/java/com/service/cardsservice/configuration/AppConfig.java,gateway/src/main/java/com/service/gateway/model/UserDTO.java,gateway/src/main/java/com/service/gateway/security/services/UserDetailsImpl.java,session-service/src/main/java/com/service/sessionservice/configuration/AppConfig.java -Dsonar.exclusions=mail-service/src/main/java/com/service/mailservice/services/MailContentProvider.java,achievement-service/src/main/java/com/service/achievementservice/configuration/UserHandshakeHandler.java
   allow_failure: false
+
 
 # Backend
 push_discovery_service_to_registry:
@@ -153,25 +182,3 @@ push_frontend_to_registry:
   variables:
     SERVICE_TYPE: $FRONTEND_SERVICE_TYPE
     SERVICE_NAME: "frontend"
-
-deploy_preview:
-  stage: deploy
-  image: node:16.16.0
-  except:
-    - master
-  script:
-    - npm install --global vercel
-    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    - vercel build --token=$VERCEL_TOKEN
-    - vercel deploy --prebuilt  --token=$VERCEL_TOKEN
-
-deploy_production:
-  stage: deploy
-  image: node:16.16.0
-  only:
-    - master
-  script:
-    - npm install --global vercel
-    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-    - vercel build --prod --token=$VERCEL_TOKEN
-    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
