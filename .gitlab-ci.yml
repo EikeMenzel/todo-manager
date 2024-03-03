@@ -102,10 +102,11 @@ linting_backend:
   script:
     - cd app/$BACKEND_SERVICE_TYPE
     - mvn checkstyle:checkstyle -Dcheckstyle.output.file=checkstyle-results.xml
+    - ls -la
   allow_failure: true
   artifacts:
     paths:
-      - checkstyle-results.xml
+      - app/$BACKEND_SERVICE_TYPE/target/checkstyle-results.xml
     expire_in: 1 week
 
 linting_frontend:
@@ -114,6 +115,7 @@ linting_frontend:
     - docker
   image: node:16-alpine
   script:
+    - npm install -g @angular/cli
     - cd app/$FRONTEND_SERVICE_TYPE
     - npm run lint
   allow_failure: true
