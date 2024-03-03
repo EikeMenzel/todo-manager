@@ -48,7 +48,6 @@
                     <failsOnError>true</failsOnError>
                     <violationSeverity>warning</violationSeverity>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                    <cacheFile>${project.build.directory}/checkstyle-cache</cacheFile>
                 </configuration>
             </plugin>
 
