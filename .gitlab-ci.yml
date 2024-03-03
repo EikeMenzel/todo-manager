@@ -44,7 +44,7 @@ variables:
       # Now use the determined paths for the Docker build command
       DOCKER_BUILDKIT=0 docker build -t $CI_REGISTRY_IMAGE_PATH/$SERVICE_NAME:latest -f $DOCKERFILE_PATH $BUILD_CONTEXT
     - docker push $CI_REGISTRY_IMAGE_PATH/$SERVICE_NAME:latest
-  allow_failure: false
+  allow_failure: true
 
 
 build_frontend:
