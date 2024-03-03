@@ -101,7 +101,7 @@ linting_backend:
   image: maven:3.9.6-eclipse-temurin-21-jammy
   script:
     - cd app/$BACKEND_SERVICE_TYPE
-    - mvn checkstyle:checkstyle -Dcheckstyle.output.file=checkstyle-results.xml
+    - mvn checkstyle:checkstyle-aggregate -Dcheckstyle.output.file=checkstyle-results.xml
     - ls -la
   allow_failure: true
   artifacts:
@@ -113,7 +113,7 @@ linting_frontend:
   stage: lint
   tags:
     - docker
-  image: node:16-alpine
+  image: node:18.13-alpine
   script:
     - npm install -g @angular/cli
     - cd app/$FRONTEND_SERVICE_TYPE
