@@ -112,9 +112,7 @@ linting_frontend:
   stage: lint
   tags:
     - docker
-  image: docker:20.10.21
-  before_script:
-    - *docker_credentials
+  image: node:16-alpine
   script:
     - cd app/$FRONTEND_SERVICE_TYPE
     - npm run lint
