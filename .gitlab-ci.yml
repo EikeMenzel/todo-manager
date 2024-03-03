@@ -177,3 +177,19 @@ push_frontend_to_registry:
   variables:
     SERVICE_TYPE: $FRONTEND_SERVICE_TYPE
     SERVICE_NAME: "frontend"
+
+release_job:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest  # Verify accessibility
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TAG == null
+      when: always  # Adapted for clarity: Run on default branch changes, excluding manual tags
+    - if: $CI_COMMIT_TAG
+      when: never   # Prevents running on manual tag creation
+  script:
+    - echo "Running release_job for Release v0.$CI_PIPELINE_IID"
+  release:
+    name: 'Release v0.$CI_PIPELINE_IID'  # Consider adapting to your versioning strategy
+    tag_name: 'v0.$CI_PIPELINE_IID'      # Consider adapting to your versioning strategy
+    description: 'Detailed release description for v0.$CI_PIPELINE_IID'  # Add more details as needed
+    ref: '$CI_COMMIT_SHA'  # The release is tied to this commit
