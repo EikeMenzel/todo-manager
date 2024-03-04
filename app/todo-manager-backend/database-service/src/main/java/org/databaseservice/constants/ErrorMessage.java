@@ -21,6 +21,7 @@ public abstract class ErrorMessage {
     public static final String STATUS_REQUIRED = "The status field must not be null and must be one of the defined states.";
     public static final String TODO_NOT_FOUND = "ToDo not found.";
     public static final String TODO_ID_REQUIRED = "TodoId is required.";
+    public static final String ID_CREATION = "ID must be null when creating";
 
     private ErrorMessage() {}
 }

@@ -1,5 +1,10 @@
 package org.authenticationservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +25,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Authentication", description = "the Authentication API")
 public class AuthenticationController {
     private final IDatabaseServiceClient databaseServiceClient;
     private final IPasswordService passwordService;
     private final IUserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody @Valid RegisterDTO registerDTO) {
+    @Operation(summary = "Register a new user", description = "Registers a new user in the system", tags = { "Authentication" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User registered successfully"),
+            @ApiResponse(responseCode = "400", description = "User registration failed due to input validation errors"),
+            @ApiResponse(responseCode = "409", description = "Username already exists"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Void> register(@RequestBody @Valid @Parameter(description = "Registration information") RegisterDTO registerDTO) {
         if(!passwordService.checkPasswordSecurity(registerDTO.getPassword()))
             throw new PasswordNotSecureException(ErrorMessage.PASSWORD_CONSTRAINTS);
 
@@ -38,7 +51,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@RequestBody @Valid LoginDTO loginDTO) {
+    @Operation(summary = "User login", description = "Logs in a user and returns a token", tags = { "Authentication" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User logged in successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized, invalid credentials")
+    })
+    public ResponseEntity<TokenDTO> login(@RequestBody @Valid @Parameter(description = "Login information") LoginDTO loginDTO) {
         return userService.authenticateUser(loginDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());

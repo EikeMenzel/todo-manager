@@ -35,7 +35,7 @@ public interface IDatabaseServiceClient {
     ResponseEntity<Void> updateToDo(@PathVariable Long userId, @PathVariable Long categoryId, @PathVariable Long toDoId, @RequestBody ToDoDTO toDoDTO);
 
     @GetMapping(TASK_PATH)
-    ResponseEntity<List<ToDoDTO>> getToDoDTOList(@PathVariable Long userId, @PathVariable String categoryId);
+    ResponseEntity<List<ToDoDTO>> getToDoDTOList(@PathVariable Long userId, @PathVariable Long categoryId);
 
     @DeleteMapping(TASK_PATH + "/{toDoId}")
     ResponseEntity<Void> deleteToDo(@PathVariable Long userId, @PathVariable Long categoryId, @PathVariable Long toDoId);
