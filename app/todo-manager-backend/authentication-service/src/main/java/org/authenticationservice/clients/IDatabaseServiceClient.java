@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "database-service")
+@SuppressWarnings("java:S1075")
 public interface IDatabaseServiceClient {
     @Value("${database.base.api.path}")
-    String BASE_PATH = "";
+    String BASE_PATH = "/api/v1/db";
 
     /**
      * Checks if a username exists in the database.

@@ -10,9 +10,10 @@ import org.taskservice.payload.ToDoDTO;
 import java.util.List;
 
 @FeignClient(name = "database-service")
+@SuppressWarnings("java:S1075")
 public interface IDatabaseServiceClient {
     @Value("${database.base.api.path}")
-    String BASE_PATH = "";
+    String BASE_PATH = "/api/v1/db";
     String CATEGORIES_PATH = BASE_PATH  + "/users/{userId}/categories";
     String TASK_PATH = CATEGORIES_PATH + "/{categoryId}/tasks";
 
