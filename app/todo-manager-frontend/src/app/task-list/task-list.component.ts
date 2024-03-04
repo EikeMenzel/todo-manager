@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 import {Task} from "../models/Task";
 import {TaskStatus} from "../models/TaskStatus";
@@ -11,6 +11,7 @@ import {FormsModule} from "@angular/forms";
 import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
 import {AuthService} from "../services/auth/auth.service";
 import {Router} from "@angular/router";
+import {HttpStatusCode} from "@angular/common/http";
 
 @Component({
   selector: 'app-task-list',
@@ -32,10 +33,11 @@ export class TaskListComponent implements OnInit {
   protected readonly faSearch = faSearch;
   protected searchCategoryTerm: string = "";
   searchTaskTerm: string = "";
-  protected activeCategory: number = 1;
+  protected activeCategory: number = -1;
   @ViewChild('editTask') successModal: ElementRef | undefined;
   private editTaskRef: NgbModalRef | undefined;
   protected editTaskHeader: string = "Add Task";
+  @ViewChild('contextMenu') contextMenuElementRef: ElementRef | undefined;
   editableTask: Task = {
     id: -1,
     status: TaskStatus.NOT_STARTED,
@@ -51,6 +53,21 @@ export class TaskListComponent implements OnInit {
 
   onCategorySearchChange() {
     this.categoryListFiltered = this.categoryList.filter(value => value.name.toLowerCase().includes(this.searchCategoryTerm.toLowerCase()))
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    // Check if the click is outside the context menu
+    if (!this.isClickInsideContextMenu(event)) {
+      this.displayContextMenu = -1; // Hide the context menu
+    }
+  }
+
+  isClickInsideContextMenu(event: MouseEvent): boolean {
+    const targetElement = event.target as HTMLElement;
+    // Assuming 'contextMenuElementRef' is a reference to your context menu element
+    // You may need to obtain a reference to the context menu element using ViewChild or another method
+    return this.contextMenuElementRef?.nativeElement.contains(targetElement);
   }
 
   onTaskSearchChange() {
@@ -70,7 +87,7 @@ export class TaskListComponent implements OnInit {
       this.router.navigate(["/login"])
     }
 
-    this.updateCategories()
+    this.updateCategories(true)
     this.updateTasks()
   }
 
@@ -94,12 +111,28 @@ export class TaskListComponent implements OnInit {
 
   protected readonly faAdd = faAdd;
 
-  updateCategories() {
+  updateCategories(selectFirst: boolean = false) {
     this.taskService.getCategories().subscribe({
       next: value => {
         if (value.body) {
           this.categoryList = value.body
           this.categoryListFiltered = value.body
+          if (this.categoryList.length == 0) {
+            return
+          }
+
+          if (!this.categoryList.find(cat => cat.id == this.activeCategory)) {
+            this.activeCategory = this.categoryList[length].id
+          }
+
+          if (selectFirst) {
+            if (this.categoryList.length != 0) {
+              this.activeCategory = this.categoryList[0]?.id ?? 1
+              this.updateTasks()
+            } else {
+              this.activeCategory = -1
+            }
+          }
         }
       },
       error: err => {
@@ -111,16 +144,10 @@ export class TaskListComponent implements OnInit {
   addCategory() {
     const categoryName = prompt('Please enter a new category name:');
 
-
     if (categoryName) {
       this.taskService.addCategory(categoryName).subscribe({
         next: value => {
-          const newCategoryId = this.categoryList.length + 1;
-          const newCategory: Category = {
-            id: -1,
-            name: categoryName
-          };
-          this.updateCategories()
+          this.updateCategories(this.categoryList.length == 0)
         },
         error: err => {
           //TODO: Error Handleing
@@ -142,13 +169,22 @@ export class TaskListComponent implements OnInit {
 
 
   private updateTasks() {
+    if (this.activeCategory == -1) {
+      this.taskList = []
+      this.taskListFiltered = []
+      return
+    }
     this.taskService.getTaskOfCategories(this.activeCategory).subscribe({
       next: res => {
         this.taskList = res.body ?? []
         this.taskListFiltered = this.taskList
       },
       error: err => {
-        //TODO Error handling
+        if (err.status == HttpStatusCode.NotFound) {
+          this.activeCategory = -1
+          this.taskList = []
+          this.taskListFiltered = this.taskList
+        }
       }
     })
   }
@@ -234,11 +270,12 @@ export class TaskListComponent implements OnInit {
 
     this.taskService.deleteCategory(toBeDeletedCategory).subscribe({
       next: value => {
-        this.updateCategories()
-        if (toBeDeletedCategory.id == this.activeCategory) {
-          this.activeCategory = this.categoryList.filter(value => value.id != toBeDeletedCategory.id)[0].id ?? 1
+        this.updateCategories(toBeDeletedCategory.id == this.activeCategory)
+        if (this.categoryList.length == 1) {
+          this.activeCategory = -1
+          this.categoryList = []
+          this.categoryListFiltered = this.categoryList
         }
-
         this.updateTasks()
       },
       error: err => {
@@ -258,6 +295,22 @@ export class TaskListComponent implements OnInit {
     this.taskService.renameCategory(category.id, newName).subscribe({
       next: res => {
         this.updateCategories()
+      },
+      error: err => {
+        //TODO Handle errors
+      }
+    })
+  }
+
+  deleteTask() {
+    this.editTaskRef?.close()
+    if (!confirm(`Are you sure you want to delete this task?`)) {
+      return
+    }
+
+    this.taskService.deleteTask(this.editableTask).subscribe({
+      next: res => {
+        this.updateTasks()
       },
       error: err => {
         //TODO Handle errors

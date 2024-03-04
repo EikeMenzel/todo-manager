@@ -51,7 +51,6 @@ export class RegisterComponent implements OnDestroy{
 
     this.authService.register(registerRequest).subscribe({
       next: (response) => {
-        console.log('Register successful', response);
         this.openSuccessModal()
       },
       error: (error) => {

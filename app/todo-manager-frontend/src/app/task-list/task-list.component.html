@@ -13,7 +13,7 @@
         <div class="row mb-2">
           <div class="col"></div>
           <div class="col-auto mt-1">
-            <button class="btn add-task-btn" (click)="openAddNewTask()">Add a Task</button>
+            <button class="btn add-task-btn" (click)="openAddNewTask()" [disabled]="categoryList.length == 0">Add a Task</button>
           </div>
           <div class="mt-1 col-4">
             <div class="search-container align-items-center d-flex position-relative">
@@ -71,7 +71,7 @@
                 class="btn btn-primary category-button mb-2 {{category.id == this.activeCategory ? 'active-category' : ''}}"
                 (click)="selectCategory(category.id)"
                 (contextmenu)="openContextMenu($event, category)">
-                <div *ngIf="this.displayContextMenu == category.id" [style.top]="contextMenuPosition.y" [style.left]="contextMenuPosition.x" class="context-menu">
+                <div #contextMenu *ngIf="this.displayContextMenu == category.id" [style.top]="contextMenuPosition.y" [style.left]="contextMenuPosition.x" class="context-menu">
                   <button class="btn btn-light" (click)="renameCategory($event, category)">Rename</button>
                   <button class="btn btn-danger" (click)="deleteCategory($event, category)">Delete</button>
                 </div>
@@ -140,8 +140,9 @@
     </div>
   </div>
   <div class="modal-footer custom-modal-footer no-border">
-    <button type="button" class="btn continue-button" (click)="modal.dismiss()">Cancel</button>
-    <button type="submit" class="btn continue-button" [disabled]="!editTaskForm.valid" (click)="saveTask()">Save
+    <button *ngIf="editableTask.id != -1" type="button" class="btn btn-danger" (click)="deleteTask()">Delete</button>
+    <button type="button" class="btn" (click)="modal.dismiss()">Cancel</button>
+    <button type="submit" class="btn btn-success" [disabled]="!editTaskForm.valid" (click)="saveTask()">Save
     </button>
   </div>
 </ng-template>

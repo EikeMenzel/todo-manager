@@ -27,7 +27,7 @@ export class TaskService {
   }
 
   addCategory(name: string) {
-    return this.http.post<void>(`/api/v1/categories`, {name}, {observe: 'response'})
+    return this.http.post<any>(`/api/v1/categories`, {name}, {observe: 'response'})
   }
 
   createNewTask(editableTask: Task) {
@@ -45,5 +45,9 @@ export class TaskService {
 
   renameCategory(id: number, name: string) {
     return this.http.put<void>(`/api/v1/categories/${id}`, {id, name}, {observe: 'response'})
+  }
+
+  deleteTask(editableTask: Task) {
+    return this.http.delete<void>(`/api/v1/categories/${editableTask.categoryId}/tasks/${editableTask.id}`, {observe: 'response'})
   }
 }
