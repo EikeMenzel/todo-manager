@@ -40,6 +40,6 @@ public class UserService implements IUserService{
     @Transactional(readOnly = true)
     public Optional<UserDTO> getUserFromUsername(String username) {
         return userRepository.getUserEntityByUsername(username)
-                .map(userMapper::UserEntityToUserDTO);
+                .map(userMapper::userEntityToUserDTO);
     }
 }

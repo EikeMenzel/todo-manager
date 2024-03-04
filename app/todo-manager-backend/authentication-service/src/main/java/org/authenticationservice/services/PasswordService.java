@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PasswordService implements IPasswordService{
+
+    @SuppressWarnings("java:S135")
     @Override
     public boolean checkPasswordSecurity(String password) {
         var hasDigit = false;

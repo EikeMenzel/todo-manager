@@ -1,7 +1,6 @@
 package org.authenticationservice.payload;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.authenticationservice.constants.ErrorMessage;

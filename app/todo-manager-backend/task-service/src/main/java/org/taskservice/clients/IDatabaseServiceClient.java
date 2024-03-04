@@ -1,16 +1,18 @@
-package org.tasskservice.clients;
+package org.taskservice.clients;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.tasskservice.payload.CategoryDTO;
-import org.tasskservice.payload.ToDoDTO;
+import org.taskservice.payload.CategoryDTO;
+import org.taskservice.payload.ToDoDTO;
 
 import java.util.List;
 
 @FeignClient(name = "database-service")
 public interface IDatabaseServiceClient {
-    String BASE_PATH = "/api/v1/db";
+    @Value("${database.base.api.path}")
+    String BASE_PATH = "";
     String CATEGORIES_PATH = BASE_PATH  + "/users/{userId}/categories";
     String TASK_PATH = CATEGORIES_PATH + "/{categoryId}/tasks";
 

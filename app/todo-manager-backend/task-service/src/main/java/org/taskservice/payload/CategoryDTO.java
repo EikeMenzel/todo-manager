@@ -1,11 +1,11 @@
-package org.tasskservice.payload;
+package org.taskservice.payload;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.tasskservice.constants.ErrorMessage;
+import org.taskservice.constants.ErrorMessage;
 
 @Data
 @AllArgsConstructor

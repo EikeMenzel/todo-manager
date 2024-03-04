@@ -100,28 +100,6 @@ public class ToDoService implements IToDoService {
                 .toList();
     }
 
-    /*private CategoryEntity fetchAndValidateCategory(Long categoryId) {
-        return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.CATEGORY_MOT_FOUND));
-    }
-
-    private TodoEntity fetchAndValidateTodoEntity(Long toDoId) {
-        return todoRepository.findById(toDoId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.TODO_NOT_FOUND));
-    }
-
-    private void validateUserAccessToCategory(Long userId, CategoryEntity category) {
-        if (!category.getUser().getId().equals(userId)) {
-            throw new BadRequestException(ErrorMessage.PERMISSION_DENIED);
-        }
-    }
-
-    private void validateIdsMatch(Long pathId, Long dtoId) {
-        if (!pathId.equals(dtoId)) {
-            throw new BadRequestException(ErrorMessage.BAD_REQUEST_IDS_MISMATCH);
-        }
-    } */
-
     private TodoEntity updateTodoEntity(TodoEntity todoEntity, ToDoDTO toDoDTO) {
         todoEntity.setText(toDoDTO.getText());
         todoEntity.setStatus(todoMapper.mapStatus(toDoDTO.getStatus()));

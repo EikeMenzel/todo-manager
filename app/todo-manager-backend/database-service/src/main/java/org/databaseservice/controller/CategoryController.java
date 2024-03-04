@@ -1,12 +1,9 @@
 package org.databaseservice.controller;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.databaseservice.constants.ErrorMessage;
-import org.databaseservice.exceptions.BadRequestException;
 import org.databaseservice.exceptions.handler.ValidationExceptionHandler;
 import org.databaseservice.payload.CategoryDTO;
 import org.databaseservice.services.ICategoryService;
