@@ -1,0 +1,199 @@
+stages:
+  - build
+  - test
+  - lint
+  - code_quality
+  - push_to_registry
+  - release
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  BACKEND_SERVICE_TYPE: todo-manager-backend
+  FRONTEND_SERVICE_TYPE: todo-manager-frontend
+
+.docker_credentials: &docker_credentials
+                       docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+
+.push_to_registry_template: &push_to_registry_template
+  stage: push_to_registry
+  tags:
+    - docker
+  image: docker:20.10.21
+  services:
+    - name: docker:20.10.21-dind
+      alias: docker
+      command: [ "--tls=false" ]
+  before_script:
+    - *docker_credentials
+  script:
+    - export CI_REGISTRY_IMAGE_PATH=$CI_REGISTRY_URL/$GITLAB_PROJECT_URL/$CI_COMMIT_REF_SLUG
+    - |
+      if [ "$SERVICE_TYPE" = "$FRONTEND_SERVICE_TYPE" ]; then
+        # For frontend, Dockerfile is directly under the service type directory
+        DOCKERFILE_PATH="app/$SERVICE_TYPE/Dockerfile"
+        BUILD_CONTEXT="app/$SERVICE_TYPE"
+      else
+        # For backend, Dockerfile is under the service name directory within the service type directory
+        DOCKERFILE_PATH="app/$SERVICE_TYPE/$SERVICE_NAME/Dockerfile"
+        BUILD_CONTEXT="app/$SERVICE_TYPE/$SERVICE_NAME"
+      fi
+      
+      # Now use the determined paths for the Docker build command
+      DOCKER_BUILDKIT=0 docker build -t $CI_REGISTRY_IMAGE_PATH/$SERVICE_NAME:latest -f $DOCKERFILE_PATH $BUILD_CONTEXT
+    - docker push $CI_REGISTRY_IMAGE_PATH/$SERVICE_NAME:latest
+  allow_failure: true
+
+
+build_frontend:
+  stage: build
+  image: node:18.13
+  tags:
+    - docker
+  before_script:
+    - npm install -g @angular/cli
+  script:
+    - cd app/$FRONTEND_SERVICE_TYPE
+    - npm install
+    - ng build
+  allow_failure: false
+
+build_backend:
+  stage: build
+  image: maven:latest
+  tags:
+    - docker
+  script:
+    - cd app/$BACKEND_SERVICE_TYPE
+    - mvn clean install -DskipTests=true --batch-mode
+    - mvn package
+  allow_failure: false
+
+test_backend: #unit tests backend
+  stage: test
+  image: maven:latest
+  tags:
+    - docker
+  script:
+    - cd app/$BACKEND_SERVICE_TYPE
+    - mvn test
+  allow_failure: false
+
+test_frontend: #e2e tests frontend
+  stage: test
+  image: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
+  tags:
+    - docker
+  script:
+    - cd app/$FRONTEND_SERVICE_TYPE
+    - npm ci
+    - npm start &
+    - npx wait-on http://localhost:4200
+    - npx cypress run --browser firefox
+  allow_failure: true
+
+# Linting Stage
+linting_backend:
+  stage: lint
+  tags:
+    - docker
+  image: maven:3.9.6-eclipse-temurin-21-jammy
+  script:
+    - cd app/$BACKEND_SERVICE_TYPE
+    - mvn checkstyle:checkstyle
+  allow_failure: false
+
+linting_frontend:
+  stage: lint
+  tags:
+    - docker
+  image: node:18.13-alpine
+  script:
+    - npm install -g @angular/cli
+    - cd app/$FRONTEND_SERVICE_TYPE
+    - npm install
+    - npm run lint
+  allow_failure: true
+
+
+sonarqube_frontend:
+  stage: code_quality
+  image: sonarsource/sonar-scanner-cli:latest
+  tags:
+    - docker
+  allow_failure: false
+  script:
+    - sonar-scanner -Dsonar.qualitygate.wait=true -Dsonar.projectKey=$SONAR_PROJECT_KEY_FRONTEND -Dsonar.sources=./app/$FRONTEND_SERVICE_TYPE -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN_FRONTEND
+
+sonarqube_backend:
+  stage: code_quality
+  tags:
+    - docker
+  image: maven:3.9.6-eclipse-temurin-21-jammy
+  script:
+    - cd app/$BACKEND_SERVICE_TYPE
+    - mvn clean verify
+    - mvn sonar:sonar -Dsonar.qualitygate.wait=true -Dsonar.projectKey=$SONAR_PROJECT_KEY_BACKEND -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN_BACKEND -Dsonar.exclusions=authentication-service/src/main/java/org/authenticationservice/exceptions/handlers/ValidationExceptionHandler.java,database-service/src/main/java/org/databaseservice/payload/ToDoDTO.java,task-service/src/main/java/org/tasskservice/exceptions/handler/ValidationExceptionHandler.java,task-service/src/main/java/org/taskservice/payload/ToDoDTO.java,database-service/src/main/java/org/databaseservice/exceptions/handler/ValidationExceptionHandler.java,task-service/src/main/java/org/taskservice/exceptions/handler/ValidationExceptionHandler.java,authentication-service/src/main/java/org/authenticationservice/payload/RegisterDTO.java,authentication-service/src/main/java/org/authenticationservice/payload/UserDTO.java,database-service/src/main/java/org/databaseservice/payload/CategoryDTO.java
+  allow_failure: false
+
+
+# Backend
+push_discovery_service_to_registry:
+  <<: *push_to_registry_template
+  variables:
+    SERVICE_TYPE: $BACKEND_SERVICE_TYPE
+    SERVICE_NAME: "discovery-service"
+
+push_database_service_to_registry:
+  <<: *push_to_registry_template
+  variables:
+    SERVICE_TYPE: $BACKEND_SERVICE_TYPE
+    SERVICE_NAME: "database-service"
+
+
+push_gateway_service_to_registry:
+  <<: *push_to_registry_template
+  variables:
+    SERVICE_TYPE: $BACKEND_SERVICE_TYPE
+    SERVICE_NAME: "gateway-service"
+
+
+push_authentication_service_to_registry:
+  <<: *push_to_registry_template
+  variables:
+    SERVICE_TYPE: $BACKEND_SERVICE_TYPE
+    SERVICE_NAME: "authentication-service"
+
+
+push_task_service_to_registry:
+  <<: *push_to_registry_template
+  variables:
+    SERVICE_TYPE: $BACKEND_SERVICE_TYPE
+    SERVICE_NAME: "task-service"
+
+# Frontend
+push_frontend_to_registry:
+  <<: *push_to_registry_template
+  variables:
+    SERVICE_TYPE: $FRONTEND_SERVICE_TYPE
+    SERVICE_NAME: "frontend"
+
+release_job:
+  stage: release
+  tags:
+    - docker
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TAG == null
+      when: always
+    - if: $CI_COMMIT_TAG
+      when: never
+  script:
+    - echo "Running release_job for Release v0.$CI_PIPELINE_IID"
+  release:
+    name: 'Release v0.$CI_PIPELINE_IID'
+    tag_name: 'v0.$CI_PIPELINE_IID'
+    description: 'Detailed release description for v0.$CI_PIPELINE_IID'
+    ref: '$CI_COMMIT_SHA'
