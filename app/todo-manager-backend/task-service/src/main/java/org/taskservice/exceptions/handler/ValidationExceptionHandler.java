@@ -1,4 +1,4 @@
-package org.tasskservice.exceptions.handler;
+package org.taskservice.exceptions.handler;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;

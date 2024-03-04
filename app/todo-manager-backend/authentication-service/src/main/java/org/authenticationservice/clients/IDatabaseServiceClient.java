@@ -2,6 +2,7 @@ package org.authenticationservice.clients;
 
 import org.authenticationservice.payload.RegisterDTO;
 import org.authenticationservice.payload.UserDTO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "database-service")
 public interface IDatabaseServiceClient {
-    String BASE_PATH = "/api/v1/db";
+    @Value("${database.base.api.path}")
+    String BASE_PATH = "";
 
     /**
      * Checks if a username exists in the database.
