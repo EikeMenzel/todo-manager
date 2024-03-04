@@ -13,7 +13,7 @@ public class RouterValidatorService {
             "/api/v1/login"
     );
 
-    public Predicate<ServerHttpRequest> isSecured =
+    public final Predicate<ServerHttpRequest> isSecured =
             serverHttpRequest -> publicApiEndpoints
                     .stream()
                     .noneMatch(uri ->

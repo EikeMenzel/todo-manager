@@ -135,7 +135,7 @@ sonarqube_backend:
   script:
     - cd app/$BACKEND_SERVICE_TYPE
     - mvn clean verify
-    - mvn sonar:sonar -Dsonar.qualitygate.wait=true -Dsonar.projectKey=$SONAR_PROJECT_KEY_BACKEND -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN_BACKEND -Dsonar.exclusions=authentication-service/src/main/java/org/authenticationservice/exceptions/handlers/ValidationExceptionHandler.java,database-service/src/main/java/org/databaseservice/payload/ToDoDTO.java,task-service/src/main/java/org/tasskservice/exceptions/handler/ValidationExceptionHandler.java,task-service/src/main/java/org/tasskservice/payload/ToDoDTO.java
+    - mvn sonar:sonar -Dsonar.qualitygate.wait=true -Dsonar.projectKey=$SONAR_PROJECT_KEY_BACKEND -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN_BACKEND -Dsonar.exclusions=authentication-service/src/main/java/org/authenticationservice/exceptions/handlers/ValidationExceptionHandler.java,database-service/src/main/java/org/databaseservice/payload/ToDoDTO.java,task-service/src/main/java/org/tasskservice/exceptions/handler/ValidationExceptionHandler.java,task-service/src/main/java/org/taskservice/payload/ToDoDTO.java,database-service/src/main/java/org/databaseservice/exceptions/handler/ValidationExceptionHandler.java,task-service/src/main/java/org/taskservice/exceptions/handler/ValidationExceptionHandler.java
   allow_failure: false
 
 
