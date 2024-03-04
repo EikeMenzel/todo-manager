@@ -1,15 +1,11 @@
 package org.databaseservice.mapper;
 
-import org.databaseservice.models.TodoEntity;
 import org.databaseservice.models.TodoPriority;
 import org.databaseservice.models.TodoStatus;
-import org.databaseservice.payload.ToDoDTO;
 import org.databaseservice.payload.ToDoPriorityDTO;
 import org.databaseservice.payload.ToDoStatusDTO;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
 public interface ITodoMapper {

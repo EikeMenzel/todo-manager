@@ -1,4 +1,4 @@
-package org.tasskservice.controller;
+package org.taskservice.controller;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.tasskservice.clients.IDatabaseServiceClient;
-import org.tasskservice.exceptions.handler.ValidationExceptionHandler;
-import org.tasskservice.payload.ToDoDTO;
+import org.taskservice.clients.IDatabaseServiceClient;
+import org.taskservice.exceptions.handler.ValidationExceptionHandler;
+import org.taskservice.payload.ToDoDTO;
 
 import java.util.List;
 

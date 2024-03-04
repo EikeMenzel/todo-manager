@@ -1,4 +1,4 @@
-package org.tasskservice.payload;
+package org.taskservice.payload;
 
 public enum ToDoStatusDTO {
     NOT_STARTED,

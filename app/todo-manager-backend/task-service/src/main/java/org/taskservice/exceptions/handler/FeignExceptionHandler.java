@@ -1,4 +1,4 @@
-package org.tasskservice.exceptions.handler;
+package org.taskservice.exceptions.handler;
 
 import feign.FeignException;
 import org.springframework.http.HttpStatus;

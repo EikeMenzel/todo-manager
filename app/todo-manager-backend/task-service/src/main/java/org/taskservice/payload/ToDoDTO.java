@@ -1,4 +1,4 @@
-package org.tasskservice.payload;
+package org.taskservice.payload;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -6,8 +6,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.tasskservice.constants.ErrorMessage;
-import org.tasskservice.exceptions.handler.ValidationExceptionHandler;
+import org.taskservice.constants.ErrorMessage;
+import org.taskservice.exceptions.handler.ValidationExceptionHandler;
 
 @Data
 @AllArgsConstructor
