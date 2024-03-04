@@ -24,7 +24,7 @@ CREATE TABLE "todo"
     t_id BIGSERIAL PRIMARY KEY,
     text TEXT NOT NULL,
     status VARCHAR(12) NOT NULL DEFAULT 'NOT_STARTED',
-    priority VARCHAR(5) NOT NULL DEFAULT 'LOW',
+    priority VARCHAR(6) NOT NULL DEFAULT 'LOW',
     category_id BIGINT,
 
     FOREIGN KEY (category_id) REFERENCES categories (c_id) ON DELETE CASCADE
