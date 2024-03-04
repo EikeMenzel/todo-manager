@@ -39,6 +39,13 @@
   right: 0;
 }
 
+.context-menu {
+  position: fixed;
+  z-index: 1000; /* Ensure it's on top of other elements */
+  box-shadow: 0 2px 5px rgba(0,0,0,.15);
+  border-radius: .25rem;
+}
+
 .add-category-btn {
   background-color: #cfbcfd;
   border-radius: 50%;

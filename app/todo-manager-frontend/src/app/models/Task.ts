@@ -5,9 +5,10 @@ export class Task {
 
   constructor(
     public id: number,
-    public description: string,
+    public text: string,
     public priority: Priority,
-    public status: TaskStatus
+    public status: TaskStatus,
+    public categoryId: number
   ) {
   }
 }

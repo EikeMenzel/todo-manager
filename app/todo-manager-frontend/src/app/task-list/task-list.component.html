@@ -13,7 +13,7 @@
         <div class="row mb-2">
           <div class="col"></div>
           <div class="col-auto mt-1">
-            <button class="btn add-task-btn">Add a Task</button>
+            <button class="btn add-task-btn" (click)="openAddNewTask()">Add a Task</button>
           </div>
           <div class="mt-1 col-4">
             <div class="search-container align-items-center d-flex position-relative">
@@ -28,16 +28,19 @@
           </div>
         </div>
         <div class="row">
+          <div *ngIf="taskList.length == 0" class="text-center">
+            <p class="text-danger bi-exclamation-circle"> No tasks yet. Please create a new one</p>
+          </div>
           <ng-container *ngFor="let todo of taskListFiltered">
-            <div class="todo-item mb-2 d-flex align-items-center {{getProClass(todo.priority)}}">
+            <div class="todo-item mb-2 d-flex align-items-center {{getProClass(todo.priority)}}" (click)="openEditTask(todo) ">
               <div class="col-10 m-lg-2 d-inline-block text-truncate">
               <span class="col-2">
-                {{ todo.description }}
+                {{ todo.text }}
               </span>
               </div>
               <div class="col-2 task-status-wrapper">
                 <span class="align-middle task-status">
-                  {{ todo.status }}
+                  {{ toHumanReadable(todo.status) }}
                 </span>
               </div>
             </div>
@@ -59,9 +62,19 @@
           </div>
         </div>
         <div class="row categories-list p-2 justify-content-center">
+          <div *ngIf="categoryList.length == 0" class="text-center">
+            <p class="text-danger bi-exclamation-circle"> No categories yet. Please create a new one</p>
+          </div>
           <ng-container *ngFor="let category of categoryListFiltered">
             <div class="text-center row">
-              <button class="btn btn-primary category-button mb-2 {{category.id == this.activeCategory ? 'active-category' : ''}}" (click)="selectCategory(category.id)">
+              <button
+                class="btn btn-primary category-button mb-2 {{category.id == this.activeCategory ? 'active-category' : ''}}"
+                (click)="selectCategory(category.id)"
+                (contextmenu)="openContextMenu($event, category)">
+                <div *ngIf="this.displayContextMenu == category.id" [style.top]="contextMenuPosition.y" [style.left]="contextMenuPosition.x" class="context-menu">
+                  <button class="btn btn-light" (click)="renameCategory($event, category)">Rename</button>
+                  <button class="btn btn-danger" (click)="deleteCategory($event, category)">Delete</button>
+                </div>
                 <span>{{ category.name }}</span>
               </button>
             </div>
@@ -79,14 +92,57 @@
 
 <ng-template #editTask let-modal>
   <div class="modal-header custom-modal-header">
-    <h5 class="modal-title text-center no-border custom-modal-title">{{this.editTaskHeader}}</h5>
+    <h5 class="modal-title text-center no-border custom-modal-title">{{ editTaskHeader }}</h5>
   </div>
   <div class="modal-body custom-modal-body no-border">
     <div class="success-container" #editTaskContentWrapper>
-      <p>Your Account has been created! Please return to the login page to proceed!</p>
+      <form #editTaskForm="ngForm" (ngSubmit)="saveTask()">
+        <div>
+          <label for="text">Task</label>
+          <input type="text" id="text" class="form-control" [(ngModel)]="editableTask.text" name="text" required>
+        </div>
+        <div>
+          <label for="status">Status</label>
+          <select id="status" class="form-control" [(ngModel)]="editableTask.status" name="status" required>
+            <option [value]="TaskStatus.NOT_STARTED">
+              Not Started
+            </option>
+            <option [value]="TaskStatus.IN_PROGRESS">
+              In Progress
+            </option>
+            <option [value]="TaskStatus.DONE">
+              Done
+            </option>
+          </select>
+        </div>
+        <div>
+          <label for="priority">Priority</label>
+          <select id="priority" class="form-control" [(ngModel)]="editableTask.priority" name="priority" required>
+            <option [value]="Priority.Low">
+              Low
+            </option>
+            <option [value]="Priority.Medium">
+              Medium
+            </option>
+            <option [value]="Priority.High">
+              High
+            </option>
+          </select>
+        </div>
+        <div>
+          <label for="categoryId">Category</label>
+          <select id="categoryId" class="form-control" [(ngModel)]="editableTask.categoryId" [value]="activeCategory"
+                  name="categoryId" required>
+            <option *ngFor="let category of this.categoryList" [value]="category.id">{{ category.name }}</option>
+          </select>
+        </div>
+      </form>
     </div>
   </div>
   <div class="modal-footer custom-modal-footer no-border">
-    <button type="button" class="btn continue-button" (click)="modal.dismiss()">Save</button>
+    <button type="button" class="btn continue-button" (click)="modal.dismiss()">Cancel</button>
+    <button type="submit" class="btn continue-button" [disabled]="!editTaskForm.valid" (click)="saveTask()">Save
+    </button>
   </div>
 </ng-template>
+

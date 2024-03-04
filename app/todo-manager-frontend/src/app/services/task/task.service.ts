@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {of} from "rxjs";
 import {Category} from "../../models/Category";
+import {Task} from "../../models/Task";
 
 @Injectable({
   providedIn: 'root'
@@ -18,27 +19,31 @@ export class TaskService {
   }
 
   public getCategories() {
-    // const cat1: Category = {
-    //   id: 1,
-    //   name: "Küche"
-    // }
-    // const cat2: Category = {
-    //   id: 2,
-    //   name: "Bad"
-    // }
-    // const cat3: Category = {
-    //   id: 3,
-    //   name: "Ne Kategorie welche absoult lang"
-    // }
-    // return of([
-    //   cat1,
-    //   cat2,
-    //   cat3
-    // ])
     return this.http.get<Category[]>(`/api/v1/categories`, {observe: 'response'})
+  }
+
+  public getTaskOfCategories(catId: number) {
+    return this.http.get<Task[]>(`/api/v1/categories/${catId}/tasks`, {observe: 'response'})
   }
 
   addCategory(name: string) {
     return this.http.post<void>(`/api/v1/categories`, {name}, {observe: 'response'})
+  }
+
+  createNewTask(editableTask: Task) {
+    editableTask.id = 0
+    return this.http.post<void>(`/api/v1/categories/${editableTask.categoryId}/tasks`, editableTask, {observe: 'response'})
+  }
+
+  updateTask(editableTask: Task, oldCategoryId: number) {
+    return this.http.put<void>(`/api/v1/categories/${oldCategoryId}/tasks/${editableTask.id}`, editableTask, {observe: 'response'})
+  }
+
+  deleteCategory(category: Category) {
+    return this.http.delete<void>(`/api/v1/categories/${category.id}`, {observe: 'response'})
+  }
+
+  renameCategory(id: number, name: string) {
+    return this.http.put<void>(`/api/v1/categories/${id}`, {id, name}, {observe: 'response'})
   }
 }
