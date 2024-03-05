@@ -50,7 +50,7 @@ export class RegisterComponent implements OnDestroy{
     };
 
     this.authService.register(registerRequest).subscribe({
-      next: (response) => {
+      next: () => {
         this.openSuccessModal()
       },
       error: (error) => {

@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {of} from "rxjs";
 import {Category} from "../../models/Category";
 import {Task} from "../../models/Task";
 

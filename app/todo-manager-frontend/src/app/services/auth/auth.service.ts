@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpResponse} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {UserAuthInfoDTO} from "../../models/UserAuthInfoDTO";
 import {LoginResponseDTO} from "../../models/LoginResponseDTO";
 import {Router} from "@angular/router";
@@ -15,7 +15,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
-    let tokenFromStorage = localStorage.getItem(this.cookieName);
+    const tokenFromStorage = localStorage.getItem(this.cookieName);
     if (tokenFromStorage) {
       this.authToken = tokenFromStorage
     }

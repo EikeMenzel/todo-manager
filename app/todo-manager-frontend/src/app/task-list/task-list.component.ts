@@ -159,10 +159,10 @@ export class TaskListComponent implements OnInit {
         return
       }
       this.taskService.addCategory(categoryName).subscribe({
-        next: _ => {
+        next: () => {
           this.updateCategories(this.categoryList.length == 0)
         },
-        error: _ => {
+        error: () => {
           alert("Could not create new category")
         }
       })
@@ -205,7 +205,7 @@ export class TaskListComponent implements OnInit {
   saveTask() {
     if (this.editableTask.id == -1) {
       this.taskService.createNewTask(this.editableTask).subscribe({
-        next: value => {
+        next: () => {
           this.updateTasks()
           this.editTaskRef?.close()
         },
@@ -221,7 +221,7 @@ export class TaskListComponent implements OnInit {
     }
 
     this.taskService.updateTask(this.editableTask, this.activeCategory).subscribe({
-      next: value => {
+      next: () => {
         this.updateTasks()
         this.editTaskRef?.close()
       },
@@ -254,7 +254,7 @@ export class TaskListComponent implements OnInit {
   protected readonly TaskStatus = TaskStatus;
   protected readonly Priority = Priority;
 
-  toHumanReadable(status: TaskStatus): String {
+  toHumanReadable(status: TaskStatus): string {
     switch (status) {
       case TaskStatus.NOT_STARTED:
         return "Not Started";
@@ -291,7 +291,7 @@ export class TaskListComponent implements OnInit {
     }
 
     this.taskService.deleteCategory(toBeDeletedCategory).subscribe({
-      next: value => {
+      next: () => {
         this.updateCategories(toBeDeletedCategory.id == this.activeCategory)
         if (this.categoryList.length == 1) {
           this.activeCategory = -1
@@ -326,7 +326,8 @@ export class TaskListComponent implements OnInit {
       return
     }
     this.taskService.renameCategory(category.id, newName).subscribe({
-      next: _ => {
+      //@ts-ignore
+      next: () => {
         this.updateCategories()
       },
       error: err => {
@@ -352,7 +353,7 @@ export class TaskListComponent implements OnInit {
     }
 
     this.taskService.deleteTask(this.editableTask).subscribe({
-      next: res => {
+      next: () => {
         this.updateTasks()
       },
       error: err => {
