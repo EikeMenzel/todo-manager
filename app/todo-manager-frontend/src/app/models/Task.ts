@@ -4,7 +4,7 @@ import {Priority} from "./Prio";
 export class Task {
 
   constructor(
-    public id: number,
+    public id: number | null,
     public text: string,
     public priority: Priority,
     public status: TaskStatus,

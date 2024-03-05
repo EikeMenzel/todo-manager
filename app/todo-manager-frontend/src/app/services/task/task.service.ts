@@ -27,11 +27,11 @@ export class TaskService {
   }
 
   addCategory(name: string) {
-    return this.http.post<any>(`/api/v1/categories`, {name}, {observe: 'response'})
+    return this.http.post<void>(`/api/v1/categories`, {name}, {observe: 'response'})
   }
 
   createNewTask(editableTask: Task) {
-    editableTask.id = 0
+    editableTask.id = null
     return this.http.post<void>(`/api/v1/categories/${editableTask.categoryId}/tasks`, editableTask, {observe: 'response'})
   }
 

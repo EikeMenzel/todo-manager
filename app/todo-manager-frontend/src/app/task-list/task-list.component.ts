@@ -136,7 +136,16 @@ export class TaskListComponent implements OnInit {
         }
       },
       error: err => {
-        //TODO: error handeling
+        if (err.status == HttpStatusCode.InternalServerError) {
+          alert("Service currently unavailable")
+          return
+        }
+
+        if (err.status == HttpStatusCode.NotFound) {
+          alert("Could not find categories")
+        } else {
+          alert("Could not update categories")
+        }
       }
     })
   }
@@ -145,12 +154,16 @@ export class TaskListComponent implements OnInit {
     const categoryName = prompt('Please enter a new category name:');
 
     if (categoryName) {
+      if (categoryName.length > 32) {
+        alert('The category name must be less that 32 characters long')
+        return
+      }
       this.taskService.addCategory(categoryName).subscribe({
-        next: value => {
+        next: _ => {
           this.updateCategories(this.categoryList.length == 0)
         },
-        error: err => {
-          //TODO: Error Handleing
+        error: _ => {
+          alert("Could not create new category")
         }
       })
 
@@ -197,7 +210,11 @@ export class TaskListComponent implements OnInit {
           this.editTaskRef?.close()
         },
         error: err => {
-          //TODO: Handle error
+          if (err.status == HttpStatusCode.InternalServerError) {
+            alert("Service currently unavailable")
+          } else {
+            alert("Could not create task")
+          }
         }
       })
       return
@@ -209,7 +226,12 @@ export class TaskListComponent implements OnInit {
         this.editTaskRef?.close()
       },
       error: err => {
-        //TODO Handle error
+        if (err.status == HttpStatusCode.NotFound) {
+          alert("Could not find the task you are trying to edit")
+        }
+        if (err.status == HttpStatusCode.InternalServerError) {
+          alert("Service currently unavailable")
+        }
       }
     })
   }
@@ -243,13 +265,13 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  openEditTask(todo: Task) {
+  openEditTask(task: Task) {
     this.editableTask = {
-      text: todo.text,
-      id: todo.id,
-      categoryId: todo.categoryId,
-      priority: todo.priority,
-      status: todo.status
+      text: task.text,
+      id: task.id,
+      categoryId: task.categoryId,
+      priority: task.priority,
+      status: task.status
     }
     this.editTaskHeader = "Edit Task"
     this.editTaskRef = this.modalService.open(this.successModal, {centered: true});
@@ -279,7 +301,18 @@ export class TaskListComponent implements OnInit {
         this.updateTasks()
       },
       error: err => {
-        //TODO Handle errors
+        if (err.status == HttpStatusCode.InternalServerError) {
+          alert("Service currently unavailable")
+          return;
+        }
+
+        if (err.status == HttpStatusCode.NotFound) {
+          alert("Could not find category to delete")
+          return;
+        } else {
+          alert("Could not delete category")
+          return;
+        }
       }
     })
   }
@@ -293,11 +326,21 @@ export class TaskListComponent implements OnInit {
       return
     }
     this.taskService.renameCategory(category.id, newName).subscribe({
-      next: res => {
+      next: _ => {
         this.updateCategories()
       },
       error: err => {
-        //TODO Handle errors
+        if (err.status == HttpStatusCode.InternalServerError) {
+          alert("Service currently unavailable")
+          return
+        }
+
+        if (err.status == HttpStatusCode.NotFound) {
+          alert("Could not find the category you want to rename")
+          return;
+        } else {
+          alert("Could not rename category")
+        }
       }
     })
   }
@@ -313,7 +356,16 @@ export class TaskListComponent implements OnInit {
         this.updateTasks()
       },
       error: err => {
-        //TODO Handle errors
+        if (err.status == HttpStatusCode.InternalServerError) {
+          alert("Service currently unavailable")
+          return
+        }
+
+        if (err.status == HttpStatusCode.NotFound) {
+          alert("Could not find task to delete")
+        } else {
+          alert("Could not delete task")
+        }
       }
     })
   }
