@@ -11,7 +11,6 @@ import {HttpClientModule} from "@angular/common/http";
   standalone: true,
   imports: [RouterOutlet, NgForOf],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
 })
 export class AppComponent {
 
