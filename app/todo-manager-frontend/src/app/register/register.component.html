@@ -12,8 +12,8 @@
       </div>
       <div class="input-group mb-3">
         <label>Password
-          <i [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'" class="ms-2 cursor-pointer"
-             (click)="togglePasswordVisibility()"></i>
+          <em [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'" class="ms-2 cursor-pointer"
+             (click)="togglePasswordVisibility()"></em>
         </label>
         <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" required
                [class.is-invalid]="passwordErrorMessage" class="form-control">
@@ -37,6 +37,6 @@
     </div>
   </div>
   <div class="modal-footer custom-modal-footer no-border">
-    <button type="button" class="btn continue-button" (click)="modal.dismiss(); this.router.navigate(['/login'])">Go to login</button>
+    <button type="button" class="btn btn-success" (click)="modal.dismiss(); this.router.navigate(['/login'])">Go to login</button>
   </div>
 </ng-template>

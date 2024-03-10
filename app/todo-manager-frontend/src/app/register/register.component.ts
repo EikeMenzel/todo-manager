@@ -34,7 +34,7 @@ export class RegisterComponent implements OnDestroy{
   ) {
   }
 
-  togglePasswordVisibility() { // Add this method
+  togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 
@@ -50,8 +50,7 @@ export class RegisterComponent implements OnDestroy{
     };
 
     this.authService.register(registerRequest).subscribe({
-      next: (response) => {
-        console.log('Register successful', response);
+      next: () => {
         this.openSuccessModal()
       },
       error: (error) => {
