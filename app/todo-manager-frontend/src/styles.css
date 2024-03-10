@@ -1,7 +1,8 @@
 :root {
   --bg-color: white;
-  --main-color: #92C7CF;
+  --main-color: rgb(255, 255, 255);
   --item-background: #cecece;
+  --bs-gray: #1de300;
 }
 
 @font-face {
@@ -16,4 +17,5 @@
 html, body {
   margin: 0;
   padding: 0;
+  background-color: rgb(250, 250, 250);
 }

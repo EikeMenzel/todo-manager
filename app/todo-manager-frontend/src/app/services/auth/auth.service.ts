@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpResponse} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {UserAuthInfoDTO} from "../../models/UserAuthInfoDTO";
 import {LoginResponseDTO} from "../../models/LoginResponseDTO";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,10 @@ export class AuthService {
   private authToken: string | undefined;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {
-    let tokenFromStorage = localStorage.getItem(this.cookieName);
+    const tokenFromStorage = localStorage.getItem(this.cookieName);
     if (tokenFromStorage) {
       this.authToken = tokenFromStorage
     }
@@ -36,5 +38,10 @@ export class AuthService {
 
   getToken() {
     return this.authToken
+  }
+
+  logout() {
+    this.authToken = undefined
+    this.router.navigate(["/login"])
   }
 }
