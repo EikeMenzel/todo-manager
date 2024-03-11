@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
 @Validated
+@Valid
 @Tag(name = "Category Management", description = "API for managing categories")
 public class CategoryController {
     private final IDatabaseServiceClient databaseServiceClient;
@@ -34,7 +36,7 @@ public class CategoryController {
     })
     public ResponseEntity<Void> saveCategory(
             @RequestHeader @NotNull @Positive @Parameter(description = "User ID", required = true) Long userId,
-            @RequestBody @Validated(ValidationExceptionHandler.OnCreate.class) @Parameter(description = "Category details", required = true) CategoryDTO categoryDTO) {
+            @RequestBody @Valid @Validated(ValidationExceptionHandler.OnCreate.class) @Parameter(description = "Category details", required = true) CategoryDTO categoryDTO) {
         return databaseServiceClient.createCategory(userId, categoryDTO);
     }
 
@@ -63,7 +65,7 @@ public class CategoryController {
     public ResponseEntity<Void> updateCategory(
             @RequestHeader @NotNull @Positive @Parameter(description = "User ID", required = true) Long userId,
             @PathVariable @NotNull @Positive @Parameter(description = "Category ID", required = true) Long categoryId,
-            @RequestBody @Validated(ValidationExceptionHandler.OnUpdate.class) @Parameter(description = "Updated category details", required = true) CategoryDTO categoryDTO) {
+            @RequestBody @Valid @Validated(ValidationExceptionHandler.OnUpdate.class) @Parameter(description = "Updated category details", required = true) CategoryDTO categoryDTO) {
         return databaseServiceClient.updateCategory(userId, categoryId, categoryDTO);
     }
 

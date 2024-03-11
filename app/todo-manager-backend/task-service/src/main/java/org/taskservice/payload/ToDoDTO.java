@@ -1,6 +1,7 @@
 package org.taskservice.payload;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -28,10 +29,12 @@ public class ToDoDTO {
 
     @NotNull(message = ErrorMessage.STATUS_REQUIRED)
     @Schema(description = "Status of the ToDo task indicating its current state.")
+    @Valid
     private ToDoStatusDTO status;
 
     @NotNull(message = ErrorMessage.PRIORITY_REQUIRED)
     @Schema(description = "Priority of the ToDo task, indicating its urgency.")
+    @Valid
     private ToDoPriorityDTO priority;
 
     @Positive(message = ErrorMessage.ID_MUST_BE_POSITIVE)
