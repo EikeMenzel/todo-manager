@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.databaseservice.payload.ToDoDTO;
 import org.databaseservice.payload.ToDoPriorityDTO;
 import org.databaseservice.payload.ToDoStatusDTO;
-import org.databaseservice.services.ICategoryService;
 import org.databaseservice.services.IToDoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -97,7 +95,7 @@ class ToDoControllerTest {
 
     @Test
     void deleteToDo_Success_ShouldReturnNoContent() throws Exception {
-        doNothing().when(toDoService).deleteTodo(eq(validUserId), eq(validCategoryId), eq(validToDoId));
+        doNothing().when(toDoService).deleteTodo(validUserId, eq(validCategoryId), eq(validToDoId));
 
         mockMvc.perform(delete("/api/v1/db/users/{userId}/categories/{categoryId}/tasks/{toDoId}", validUserId, validCategoryId, validToDoId)
                         .contentType(MediaType.APPLICATION_JSON))

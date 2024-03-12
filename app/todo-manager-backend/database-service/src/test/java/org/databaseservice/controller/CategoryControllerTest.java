@@ -3,7 +3,6 @@ package org.databaseservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.databaseservice.payload.CategoryDTO;
 import org.databaseservice.services.ICategoryService;
-import org.databaseservice.services.IUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -44,8 +42,8 @@ class CategoryControllerTest {
     private CategoryController categoryController;
 
     private CategoryDTO validCategoryDTO;
-    private Long validUserId = 1L;
-    private Long validCategoryId = 1L;
+    private final Long validUserId = 1L;
+    private final Long validCategoryId = 1L;
 
     @BeforeEach
     void setUp() {

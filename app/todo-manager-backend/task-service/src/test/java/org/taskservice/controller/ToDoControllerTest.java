@@ -2,6 +2,8 @@ package org.taskservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -169,7 +172,7 @@ class ToDoControllerTest {
         Long categoryId = 1L;
 
         ResponseEntity<List<ToDoDTO>> responseEntity = ResponseEntity.ok(Collections.emptyList());
-        Mockito.when(databaseServiceClient.getToDoDTOList(eq(userId), eq(categoryId)))
+        Mockito.when(databaseServiceClient.getToDoDTOList(userId, categoryId))
                 .thenReturn(responseEntity);
 
         mockMvc.perform(get("/api/v1/categories/{categoryId}/tasks", categoryId)
@@ -266,20 +269,6 @@ class ToDoControllerTest {
     }
 
     @Test
-    void testUpdateTodoInvalidRequestBody() throws Exception {
-        Long userId = 1L;
-        Long categoryId = 1L;
-        Long toDoId = 1L;
-        ToDoDTO toDoDTO = new ToDoDTO(toDoId, "", ToDoStatusDTO.IN_PROGRESS, ToDoPriorityDTO.HIGH, categoryId);
-
-        mockMvc.perform(put("/api/v1/categories/{categoryId}/tasks/{toDoId}", categoryId, toDoId)
-                        .header("userId", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(toDoDTO)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void testUpdateTodoInvalidCategoryId() throws Exception {
         Long userId = 1L;
         Long categoryId = -1L; // Invalid category ID
@@ -320,34 +309,23 @@ class ToDoControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    void testUpdateTodoNullText() throws Exception {
+    private static Stream<String> provideInvalidTexts() {
+        return Stream.of("", " ", null);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidTexts")
+    void testUpdateTodoInvalidTexts(String text) throws Exception {
         Long userId = 1L;
         Long categoryId = 1L;
         Long toDoId = 1L;
-        ToDoDTO toDoDTO = new ToDoDTO(toDoId, null, ToDoStatusDTO.IN_PROGRESS, ToDoPriorityDTO.HIGH, categoryId);
+        ToDoDTO toDoDTO = new ToDoDTO(toDoId, text, ToDoStatusDTO.IN_PROGRESS, ToDoPriorityDTO.HIGH, categoryId);
 
-        mockMvc.perform(put("/api/v1/categories/{categoryId}/tasks/{toDoId}", categoryId, toDoId)
-                        .header("userId", userId)
+        mockMvc.perform(put("/api/v1/categories/{categoryId}/tasks/{toDoId}", userId, categoryId, toDoId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(toDoDTO)))
                 .andExpect(status().isBadRequest());
     }
-
-    @Test
-    void testUpdateTodoBlankText() throws Exception {
-        Long userId = 1L;
-        Long categoryId = 1L;
-        Long toDoId = 1L;
-        ToDoDTO toDoDTO = new ToDoDTO(toDoId, "", ToDoStatusDTO.IN_PROGRESS, ToDoPriorityDTO.HIGH, categoryId);
-
-        mockMvc.perform(put("/api/v1/categories/{categoryId}/tasks/{toDoId}", categoryId, toDoId)
-                        .header("userId", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(toDoDTO)))
-                .andExpect(status().isBadRequest());
-    }
-
     @Test
     void testUpdateTodoInvalidUserId() throws Exception {
         Long userId = -1L;
