@@ -8,7 +8,7 @@ import {Router} from "@angular/router";
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly cookieName: string = "card-trainer-user";
+  private readonly cookieName: string = "todo-user";
   private authToken: string | undefined;
 
   constructor(

@@ -13,7 +13,7 @@
         <div class="row mb-2">
           <div class="col"></div>
           <div class="col-auto mt-1">
-            <button class="btn add-task-btn" (click)="openAddNewTask()" [disabled]="categoryList.length == 0">Add a Task</button>
+            <button class="btn add-task-btn" id="add-task" (click)="openAddNewTask()" [disabled]="categoryList.length == 0">Add a Task</button>
           </div>
           <div class="mt-1 col-4">
             <div class="search-container align-items-center d-flex position-relative">
@@ -80,7 +80,7 @@
             </div>
           </ng-container>
           <div class="col-auto">
-            <button class="btn btn-success add-category-btn" (click)="addCategory()">
+            <button id="add-category" class="btn btn-success add-category-btn" (click)="addCategory()">
               <fa-icon [icon]="faAdd" size="sm"></fa-icon>
             </button>
           </div>
@@ -98,8 +98,8 @@
     <div class="success-container" #editTaskContentWrapper>
       <form #editTaskForm="ngForm" (ngSubmit)="saveTask()">
         <div>
-          <label for="text">Task</label>
-          <input type="text" id="text" class="form-control" [(ngModel)]="editableTask.text" name="text" required>
+          <label for="task-text-input">Task</label>
+          <input type="text" id="task-text-input" class="form-control" [(ngModel)]="editableTask.text" name="text" required>
         </div>
         <div>
           <label for="status">Status</label>
@@ -140,10 +140,9 @@
     </div>
   </div>
   <div class="modal-footer custom-modal-footer no-border">
-    <button *ngIf="editableTask.id != -1" type="button" class="btn btn-danger" (click)="deleteTask()">Delete</button>
-    <button type="button" class="btn" (click)="modal.dismiss()">Cancel</button>
-    <button type="submit" class="btn btn-success" [disabled]="!editTaskForm.valid" (click)="saveTask()">Save
+    <button *ngIf="editableTask.id != -1" type="button" id="delete-task-button" class="btn btn-danger" (click)="deleteTask()">Delete</button>
+    <button type="button" class="btn" id="cancel-edit-task-button" (click)="modal.dismiss()">Cancel</button>
+    <button type="submit" class="btn btn-success" id="save-task-button" [disabled]="!editTaskForm.valid" (click)="saveTask()">Save
     </button>
   </div>
 </ng-template>
-
