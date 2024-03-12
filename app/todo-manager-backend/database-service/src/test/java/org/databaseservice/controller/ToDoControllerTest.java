@@ -95,7 +95,7 @@ class ToDoControllerTest {
 
     @Test
     void deleteToDo_Success_ShouldReturnNoContent() throws Exception {
-        doNothing().when(toDoService).deleteTodo(validUserId, eq(validCategoryId), eq(validToDoId));
+        doNothing().when(toDoService).deleteTodo(validUserId, validCategoryId, validToDoId);
 
         mockMvc.perform(delete("/api/v1/db/users/{userId}/categories/{categoryId}/tasks/{toDoId}", validUserId, validCategoryId, validToDoId)
                         .contentType(MediaType.APPLICATION_JSON))
