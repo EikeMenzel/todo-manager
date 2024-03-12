@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequestMapping("/api/v1/categories/{categoryId}/tasks")
 @RequiredArgsConstructor
 @Validated
+@Valid
 @Tag(name = "ToDo Management", description = "API for managing ToDo tasks within categories")
 public class ToDoController {
     private final IDatabaseServiceClient databaseServiceClient;
@@ -34,7 +36,7 @@ public class ToDoController {
     })
     public ResponseEntity<Void> saveToDo(@RequestHeader @NotNull @Positive @Parameter(description = "User ID", required = true) Long userId,
                                          @PathVariable @NotNull @Positive @Parameter(description = "Category ID within which the ToDo task is to be created", required = true) Long categoryId,
-                                         @RequestBody @Validated(ValidationExceptionHandler.OnCreate.class) @Parameter(description = "ToDo task details", required = true) ToDoDTO toDoDTO) {
+                                         @RequestBody @Valid @Validated(ValidationExceptionHandler.OnCreate.class) @Parameter(description = "ToDo task details", required = true) ToDoDTO toDoDTO) {
         return databaseServiceClient.createToDo(userId, categoryId, toDoDTO);
     }
 
@@ -63,7 +65,7 @@ public class ToDoController {
     public ResponseEntity<Void> updateTodo(@RequestHeader @NotNull @Positive @Parameter(description = "User ID", required = true) Long userId,
                                            @PathVariable @NotNull @Positive @Parameter(description = "Category ID within which the ToDo task exists", required = true) Long categoryId,
                                            @PathVariable @NotNull @Positive @Parameter(description = "ToDo task ID to be updated", required = true) Long toDoId,
-                                           @RequestBody @Validated(ValidationExceptionHandler.OnUpdate.class) @Parameter(description = "Updated ToDo task details", required = true) ToDoDTO toDoDTO) {
+                                           @RequestBody @Valid @Validated(ValidationExceptionHandler.OnUpdate.class) @Parameter(description = "Updated ToDo task details", required = true) ToDoDTO toDoDTO) {
         return databaseServiceClient.updateToDo(userId, categoryId, toDoId, toDoDTO);
     }
 
