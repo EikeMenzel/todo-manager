@@ -20,6 +20,14 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U db_controller -d todo-manager" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+
   pgadmin:
     image: dpage/pgadmin4
     ports:
@@ -39,8 +47,9 @@ services:
       restart_policy:
         condition: on-failure
 
+
   frontend:
-    image: git-registry.thm.de/etmn59/todo-manager/ci-cd-pipeline/frontend:latest
+    image: git-registry.thm.de/etmn59/todo-manager/dev/frontend:latest
     ports:
     - target: 4200
       published: 4200
@@ -56,8 +65,9 @@ services:
       restart_policy:
         condition: on-failure
 
+
   discovery-service:
-    image: git-registry.thm.de/etmn59/todo-manager/ci-cd-pipeline/discovery-service:latest
+    image: git-registry.thm.de/etmn59/todo-manager/dev/discovery-service:latest
     ports:
       - target: 8761
         published: 8761
@@ -72,26 +82,15 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8761/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
 
-  authentication-service:
-    image: git-registry.thm.de/etmn59/todo-manager/ci-cd-pipeline/authentication-service:latest
-    ports:
-      - target: 8081
-        published: 8081
-        mode: host
-    networks:
-      - todo-manager
-    deploy:
-      mode: replicated
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: on-failure
 
   database-service:
-    image: git-registry.thm.de/etmn59/todo-manager/ci-cd-pipeline/database-service:latest
+    image: git-registry.thm.de/etmn59/todo-manager/dev/database-service:latest
     ports:
       - target: 8082
         published: 8082
@@ -106,9 +105,52 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8082/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      discovery-service:
+        condition:
+          service_healthy
+      db:
+        condition:
+          service_healthy
+
+
+  authentication-service:
+    image: git-registry.thm.de/etmn59/todo-manager/dev/authentication-service:latest
+    ports:
+      - target: 8081
+        published: 8081
+        mode: host
+    networks:
+      - todo-manager
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8081/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      discovery-service:
+        condition:
+          service_healthy
+      database-service:
+        condition:
+          service_healthy
+
 
   task-service:
-    image: git-registry.thm.de/etmn59/todo-manager/ci-cd-pipeline/task-service:latest
+    image: git-registry.thm.de/etmn59/todo-manager/dev/task-service:latest
     ports:
       - target: 8083
         published: 8083
@@ -123,9 +165,22 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8083/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      discovery-service:
+        condition:
+          service_healthy
+      database-service:
+        condition:
+          service_healthy
+
 
   gateway-service:
-    image: git-registry.thm.de/etmn59/todo-manager/ci-cd-pipeline/gateway-service:latest
+    image: git-registry.thm.de/etmn59/todo-manager/dev/gateway-service:latest
     networks:
       - todo-manager
     deploy:
@@ -136,6 +191,19 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:80/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      discovery-service:
+        condition:
+          service_healthy
+      database-service:
+        condition:
+          service_healthy
+
 
 volumes:
   pgadmin_servers:
