@@ -52,7 +52,9 @@ services:
           service_healthy
 
   frontend:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/frontend:latest
+    build:
+      context: ./app/todo-manager-frontend
+      dockerfile: Dockerfile
     ports:
     - target: 4200
       published: 4200
@@ -70,7 +72,9 @@ services:
 
 
   discovery-service:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/discovery-service:latest
+    build:
+      context: ./app/todo-manager-backend/discovery-service
+      dockerfile: Dockerfile
     ports:
       - target: 8761
         published: 8761
@@ -93,7 +97,9 @@ services:
 
 
   database-service:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/database-service:latest
+    build:
+      context: ./app/todo-manager-backend/database-service
+      dockerfile: Dockerfile
     ports:
       - target: 8082
         published: 8082
@@ -123,7 +129,9 @@ services:
 
 
   authentication-service:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/authentication-service:latest
+    build:
+      context: ./app/todo-manager-backend/authentication-service
+      dockerfile: Dockerfile
     ports:
       - target: 8081
         published: 8081
@@ -153,7 +161,9 @@ services:
 
 
   task-service:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/task-service:latest
+    build:
+      context: ./app/todo-manager-backend/task-service
+      dockerfile: Dockerfile
     ports:
       - target: 8083
         published: 8083
@@ -183,7 +193,9 @@ services:
 
 
   gateway-service:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/gateway-service:latest
+    build:
+      context: ./app/todo-manager-backend/gateway-service
+      dockerfile: Dockerfile
     networks:
       - todo-manager
     deploy:
