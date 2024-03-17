@@ -139,6 +139,16 @@ export class TaskListComponent implements OnInit {
           return
         }
 
+        if (err.status == HttpStatusCode.Unauthorized) {
+          this.router.navigate(['/login'])
+          return;
+        }
+
+        if (!this.authService.getToken()) {
+          this.router.navigate(['/login'])
+          return;
+        }
+
         if (err.status == HttpStatusCode.NotFound) {
           alert("Could not find categories")
         } else {
