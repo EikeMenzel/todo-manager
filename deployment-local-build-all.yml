@@ -1,0 +1,229 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14.1-alpine
+    ports:
+      - target: 5432
+        published: 5433
+        mode: host
+    volumes:
+      - ./app/todo-manager-backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/postgresql/data
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: db_controller
+      POSTGRES_PASSWORD:  postgres
+      POSTGRES_DB: todo-manager
+    networks:
+      - todo-manager
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U db_controller -d todo-manager" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - target: 80
+        published: 16543
+        mode: host
+    networks:
+      - todo-manager
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - ./app/todo-manager-backend/database/servers.json:/pgadmin4/servers.json
+      - ./app/todo-manager-backend/database/devdbypass:/pgadmin4/devdbpass
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      db:
+        condition:
+          service_healthy
+
+  frontend:
+    build:
+      context: ./app/todo-manager-frontend/
+      dockerfile: Dockerfile-Local
+    ports:
+    - target: 4200
+      published: 4200
+      mode: host
+    networks:
+      - todo-manager
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+
+  discovery-service:
+    build:
+      context: ./app/todo-manager-backend/discovery-service
+      dockerfile: Dockerfile
+    ports:
+      - target: 8761
+        published: 8761
+        mode: host
+    networks:
+      - todo-manager
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8761/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+
+
+  database-service:
+    build:
+      context: ./app/todo-manager-backend/database-service
+      dockerfile: Dockerfile
+    ports:
+      - target: 8082
+        published: 8082
+        mode: host
+    networks:
+      - todo-manager
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8082/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      discovery-service:
+        condition:
+          service_healthy
+      db:
+        condition:
+          service_healthy
+
+
+  authentication-service:
+    build:
+      context: ./app/todo-manager-backend/authentication-service
+      dockerfile: Dockerfile
+    ports:
+      - target: 8081
+        published: 8081
+        mode: host
+    networks:
+      - todo-manager
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8081/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      discovery-service:
+        condition:
+          service_healthy
+      database-service:
+        condition:
+          service_healthy
+
+
+  task-service:
+    build:
+      context: ./app/todo-manager-backend/task-service
+      dockerfile: Dockerfile
+    ports:
+      - target: 8083
+        published: 8083
+        mode: host
+    networks:
+      - todo-manager
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8083/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      discovery-service:
+        condition:
+          service_healthy
+      database-service:
+        condition:
+          service_healthy
+
+
+  gateway-service:
+    build:
+      context: ./app/todo-manager-backend/gateway-service
+      dockerfile: Dockerfile
+    networks:
+      - todo-manager
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:80/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      discovery-service:
+        condition:
+          service_healthy
+      database-service:
+        condition:
+          service_healthy
+
+
+volumes:
+  pgadmin_servers:
+  pgadmin_devdbpass:
+  db_data:
+
+networks:
+  todo-manager:
+    external: true
