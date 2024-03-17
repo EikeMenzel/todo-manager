@@ -18,6 +18,10 @@ export class AuthService {
     const tokenFromStorage = localStorage.getItem(this.cookieName);
     if (tokenFromStorage) {
       this.authToken = tokenFromStorage
+    } else {
+      if (window.location.pathname == "/") {
+        this.router.navigate(["/login"]);
+      }
     }
   }
 
@@ -42,6 +46,7 @@ export class AuthService {
 
   logout() {
     this.authToken = undefined
+    localStorage.removeItem(this.cookieName);
     this.router.navigate(["/login"])
   }
 }

@@ -2,10 +2,6 @@ version: '3.8'
 services:
   db:
     image: postgres:14.1-alpine
-    ports:
-      - target: 5432
-        published: 5433
-        mode: host
     volumes:
       - ./app/todo-manager-backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db_data:/var/lib/postgresql/data
@@ -30,10 +26,6 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    ports:
-      - target: 80
-        published: 16543
-        mode: host
     networks:
       - todo-manager
     environment:
@@ -52,11 +44,9 @@ services:
           service_healthy
 
   frontend:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/frontend:latest
-    ports:
-    - target: 4200
-      published: 4200
-      mode: host
+    build:
+      context: ./app/todo-manager-frontend
+      dockerfile: Dockerfile
     networks:
       - todo-manager
     deploy:
@@ -70,11 +60,9 @@ services:
 
 
   discovery-service:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/discovery-service:latest
-    ports:
-      - target: 8761
-        published: 8761
-        mode: host
+    build:
+      context: ./app/todo-manager-backend/discovery-service
+      dockerfile: Dockerfile
     networks:
       - todo-manager
     deploy:
@@ -93,11 +81,9 @@ services:
 
 
   database-service:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/database-service:latest
-    ports:
-      - target: 8082
-        published: 8082
-        mode: host
+    build:
+      context: ./app/todo-manager-backend/database-service
+      dockerfile: Dockerfile
     networks:
       - todo-manager
     deploy:
@@ -123,11 +109,9 @@ services:
 
 
   authentication-service:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/authentication-service:latest
-    ports:
-      - target: 8081
-        published: 8081
-        mode: host
+    build:
+      context: ./app/todo-manager-backend/authentication-service
+      dockerfile: Dockerfile
     networks:
       - todo-manager
     deploy:
@@ -153,11 +137,9 @@ services:
 
 
   task-service:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/task-service:latest
-    ports:
-      - target: 8083
-        published: 8083
-        mode: host
+    build:
+      context: ./app/todo-manager-backend/task-service
+      dockerfile: Dockerfile
     networks:
       - todo-manager
     deploy:
@@ -183,7 +165,9 @@ services:
 
 
   gateway-service:
-    image: git-registry.thm.de/etmn59/todo-manager/dev/gateway-service:latest
+    build:
+      context: ./app/todo-manager-backend/gateway-service
+      dockerfile: Dockerfile
     networks:
       - todo-manager
     deploy:
