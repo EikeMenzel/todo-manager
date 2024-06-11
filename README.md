@@ -29,6 +29,9 @@ As soon as the backend was fully started it could take roughly 1 minute to execu
 1. First do npm install
 2. Now do npm start and navigate to http://localhost:4200
 
+### Live-Version
+https://todo.timsuellner.de/
+
 <br>
 
 # Pipeline
